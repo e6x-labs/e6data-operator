@@ -1,0 +1,113 @@
+The e6data server can be accessed via port {{ .Values.server.service.servicePort }} on the following DNS name from within your cluster:
+{{ template "e6data.server.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+
+{{ if .Values.server.ingress.enabled -}}
+From outside the cluster, the server URL(s) are:
+{{- range .Values.server.ingress.hosts }}
+http://{{ . }}
+{{- end }}
+{{- else }}
+Get the e6data server URL by running these commands in the same shell:
+{{- if contains "NodePort" .Values.server.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "e6data.server.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.server.service.type }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        You can watch the status of by running 'kubectl get svc --namespace {{ .Release.Namespace }} -w {{ template "e6data.server.fullname" . }}'
+
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ template "e6data.server.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo http://$SERVICE_IP:{{ .Values.server.service.servicePort }}
+{{- else if contains "ClusterIP"  .Values.server.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ template "e6data.name" . }},component={{ .Values.server.name }}" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 9090
+{{- end }}
+
+
+{{- if .Values.server.persistentVolume.enabled }}
+{{- else }}
+#################################################################################
+######   WARNING: Persistence is disabled!!! You will lose your data when   #####
+######            the Server pod is terminated.                             #####
+#################################################################################
+{{- end }}
+{{- end }}
+
+{{ if .Values.alertmanager.enabled }}
+The e6data alertmanager can be accessed via port {{ .Values.alertmanager.service.servicePort }} on the following DNS name from within your cluster:
+{{ template "e6data.alertmanager.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+
+{{ if .Values.alertmanager.ingress.enabled -}}
+From outside the cluster, the alertmanager URL(s) are:
+{{- range .Values.alertmanager.ingress.hosts }}
+http://{{ . }}
+{{- end }}
+{{- else }}
+Get the Alertmanager URL by running these commands in the same shell:
+{{- if contains "NodePort" .Values.alertmanager.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "e6data.alertmanager.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.alertmanager.service.type }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        You can watch the status of by running 'kubectl get svc --namespace {{ .Release.Namespace }} -w {{ template "e6data.alertmanager.fullname" . }}'
+
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ template "e6data.alertmanager.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo http://$SERVICE_IP:{{ .Values.alertmanager.service.servicePort }}
+{{- else if contains "ClusterIP"  .Values.alertmanager.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ template "e6data.name" . }},component={{ .Values.alertmanager.name }}" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 9093
+{{- end }}
+{{- end }}
+
+{{- if .Values.alertmanager.persistence.enabled }}
+{{- else }}
+#################################################################################
+######   WARNING: Persistence is disabled!!! You will lose your data when   #####
+######            the AlertManager pod is terminated.                       #####
+#################################################################################
+{{- end }}
+{{- end }}
+
+{{- if (index .Values "e6data-node-exporter" "enabled") }}
+#################################################################################
+######   WARNING: Pod Security Policy has been disabled by default since    #####
+######            it deprecated after k8s 1.25+. use                        #####
+######            (index .Values "e6data-node-exporter" "rbac"          #####
+###### .          "pspEnabled") with (index .Values                         #####
+######            "e6data-node-exporter" "rbac" "pspAnnotations")       #####
+######            in case you still need it.                                #####
+#################################################################################
+{{- end }}
+
+{{ if (index .Values "e6data-pushgateway" "enabled") }}
+The e6data PushGateway can be accessed via port {{ index .Values "e6data-pushgateway" "service" "port" }} on the following DNS name from within your cluster:
+{{ include "e6data-pushgateway.fullname" (index .Subcharts "e6data-pushgateway") }}.{{ .Release.Namespace }}.svc.cluster.local
+
+{{ if (index .Values "e6data-pushgateway" "ingress" "enabled") -}}
+From outside the cluster, the pushgateway URL(s) are:
+{{- range (index .Values "e6data-pushgateway" "ingress" "hosts") }}
+http://{{ . }}
+{{- end }}
+{{- else }}
+Get the PushGateway URL by running these commands in the same shell:
+{{- $pushgateway_svc_type := index .Values "e6data-pushgateway" "service" "type" -}}
+{{- if contains "NodePort" $pushgateway_svc_type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "e6data-pushgateway.fullname" (index .Subcharts "e6data-pushgateway") }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" $pushgateway_svc_type }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        You can watch the status of by running 'kubectl get svc --namespace {{ .Release.Namespace }} -w {{ include "e6data-pushgateway.fullname" (index .Subcharts "e6data-pushgateway") }}'
+
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "e6data-pushgateway.fullname" (index .Subcharts "e6data-pushgateway") }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo http://$SERVICE_IP:{{ index .Values "e6data-pushgateway" "service" "port" }}
+{{- else if contains "ClusterIP" $pushgateway_svc_type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ include "e6data.name" (index .Subcharts "e6data-pushgateway") }},component=pushgateway" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 9091
+{{- end }}
+{{- end }}
+{{- end }}
+
+For more information on running e6data, visit:
+https://e6data.io/

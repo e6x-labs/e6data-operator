@@ -1,0 +1,16 @@
+{{- if and .Values.rbac.create (empty .Values.server.namespaces) (empty .Values.server.useExistingClusterRoleName) -}}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: RoleBinding
+metadata:
+  labels:
+    {{- include "e6data.server.labels" . | nindent 4 }}
+  name: {{ template "e6data.server.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "e6data.serviceAccountName.server" . }}
+{{ include "e6data.namespace" . | indent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "e6data.server.fullname" . }}
+{{- end }}
