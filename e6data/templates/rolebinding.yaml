@@ -1,16 +1,57 @@
-{{- if and .Values.rbac.create (empty .Values.server.namespaces) (empty .Values.server.useExistingClusterRoleName) -}}
-apiVersion: {{ template "rbac.apiVersion" . }}
+{{- range $namespace := .Values.workspace.namespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    {{- include "e6data.server.labels" . | nindent 4 }}
-  name: {{ template "e6data.server.fullname" . }}
+  name: {{ $namespace }}-rolebinding
+  namespace: {{ $namespace }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "e6data.serviceAccountName.server" . }}
-{{ include "e6data.namespace" . | indent 4 }}
+    name: {{ $namespace }}-service-account
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ template "e6data.server.fullname" . }}
+  name: {{ $namespace }}-role
+---
 {{- end }}
+
+
+{{- range $namespace := .Values.workspace.namespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+  name: {{ $namespace }}-agent-rolebinding
+  namespace: {{ $namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $namespace }}-service-account
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: e6data-agent
+---
+{{- end }}
+
+{{- $dot := . }}
+{{- range $namespace := .Values.workspace.namespaces }}
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+  name: {{ $namespace }}-e6data-rolebinding
+  namespace: {{ $namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "e6data.serviceAccountName.server" $dot }}
+    namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $namespace }}-role
+---
+{{- end }}
+
+
+

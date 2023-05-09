@@ -1,0 +1,127 @@
+{{- range $namespace := .Values.workspace.namespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $namespace }}-role
+  namespace: {{ $namespace }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - nodes/proxy
+      - nodes/metrics
+      - services
+      - endpoints
+      - pods
+      - ingresses
+      - configmaps
+      - secrets
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - delete
+  - apiGroups:
+      - "extensions"
+      - "networking.k8s.io"
+    resources:
+      - ingresses/status
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+  - apiGroups:
+      - "batch"
+    resources:
+      - jobs
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update  
+      - delete 
+  - apiGroups:
+      - "batch"
+    resources:
+      - jobs/status
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch 
+      - create
+      - update
+      - delete
+       
+---
+{{- end }}
+
+
+{{- range $namespace := .Values.workspace.namespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: e6data-agent
+  namespace: {{ $namespace }}
+rules:
+  # Rules which allow discovery.kubernetes to function.
+  - apiGroups:
+      - ""
+      - "discovery.k8s.io"
+      - "networking.k8s.io"
+    resources:
+      - endpoints
+      - endpointslices
+      - ingresses
+      - nodes
+      - nodes/proxy
+      - pods
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  # Rules which allow loki.source.kubernetes and loki.source.podlogs to work.
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/log
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "monitoring.grafana.com"
+    resources:
+      - podlogs
+    verbs:
+      - get
+      - list
+      - watch
+  # Rules which allow mimir.rules.kubernetes to work.
+  - apiGroups: ["monitoring.coreos.com"]
+    resources:
+      - prometheusrules
+    verbs:
+      - get
+      - list
+      - watch
+
+
+{{- end }}
