@@ -11,9 +11,14 @@ imagePullSecrets: []
 serviceAccounts:
   server:
     create: true
-    name: ""
+    name: "test-e6data-operator"
     annotations: {}
 
+workspace:
+  namespaces:
+    - test2
+
+    
 server:
   ## Platform-operator server container name
   ##
@@ -64,6 +69,8 @@ server:
   ##       name: mysecret
   ##       key: username
   env: []
+
+
 
   ingress:
     ## If true, Platform-operator server Ingress will be created
