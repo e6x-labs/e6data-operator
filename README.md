@@ -12,7 +12,7 @@ This chart bootstraps a [e6data](https://e6data.io/) deployment on a [Kubernetes
 ## Get Repository Info
 
 ```console
-helm repo add e6data-operator  https://raw.githubusercontent.com/e6x-labs/e6data-operator/main
+helm repo add e6data-operator  https://e6x-labs.github.io/e6data-operator/
 helm repo update
 ```
 
@@ -23,7 +23,8 @@ _See [helm repository](https://helm.sh/docs/helm/helm_repo/) for command documen
 Start from Version 16.0, e6data chart required Helm 3.7+ in order to install successfully. Please check your Helm chart version before installation.
 
 ```console
-helm install [RELEASE_NAME] e6data-community/e6data
+helm install [RELEASE_NAME] e6data-operator/e6data
+
 ```
 
 _See [configuration](#configuration) below._
