@@ -49,3 +49,21 @@ rules:
   - /metrics
   verbs:
   - get
+
+--- 
+{{- range $namespace := .Values.workspace.namespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+  name: {{ $namespace }}-e6data-agent-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: e6data-agent
+    namespace: {{ $namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: e6data-agent
+---
+{{- end }}

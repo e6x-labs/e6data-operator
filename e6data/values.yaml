@@ -16,8 +16,7 @@ serviceAccounts:
 
 workspace:
   namespaces:
-    - test1
-    - test2
+    - zeotap
 
 server:
   ## Platform-operator server container name
@@ -29,7 +28,7 @@ server:
   image:
     repository: us-docker.pkg.dev/e6data-analytics/e6-platform-public/plat-operator
     # if not set appVersion field from Chart.yaml is used
-    tag: "1.0.15"
+    tag: "1.0.19"
     # When digest is set to a non-empty value, images will be pulled by digest (regardless of tag value).
     digest: ""
     pullPolicy: Always
@@ -97,7 +96,7 @@ server:
     ##
     # hosts: []
     hosts:
-      - modi.e6xlabs.cloud
+      - plat.e6xlabs.cloud
     #   - Platform-operator.domain.com
     #   - domain.com/Platform-operator
 
@@ -118,9 +117,9 @@ server:
     ##
     # tls: []
     tls:
-      - secretName: my-tls-secret
+      - secretName: plat-tls-secret
         hosts:
-          - modi.e6xlabs.cloud
+          - plat.e6xlabs.cloud
 
   ## Server Deployment Strategy type
   strategy:

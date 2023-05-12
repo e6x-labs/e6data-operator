@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ $namespace }}-role
+  name: {{ $namespace }}-ops-role
   namespace: {{ $namespace }}
 rules:
   - apiGroups:
@@ -65,55 +65,25 @@ rules:
       - watch 
       - create
       - update
-      - delete
-       
----
+      - delete      
 {{- end }}
 
-
+---
+{{- $dot := . }}
 {{- range $namespace := .Values.workspace.namespaces }}
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: RoleBinding
 metadata:
-  name: {{ $namespace }}-reloader-role
+  labels:
+  name: {{ $namespace }}-ops-role-binding
   namespace: {{ $namespace }}
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - list
-  - get
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  - statefulsets
-  verbs:
-  - list
-  - get
-  - update
-  - patch
-- apiGroups:
-  - extensions
-  resources:
-  - deployments
-  - statefulsets
-  verbs:
-  - list
-  - get
-  - update
-  - patch
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
-
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "e6data.serviceAccountName.server" $dot }}
+  {{ include "e6data.namespace" $dot | indent 2 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $namespace }}-ops-role
 ---
 {{- end }}
-
