@@ -59,6 +59,8 @@ rules:
       - "apps"
     resources:
       - deployments
+      - daemonsets
+      - statefulsets
     verbs:
       - get
       - list
