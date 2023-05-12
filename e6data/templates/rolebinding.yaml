@@ -29,7 +29,7 @@ subjects:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: e6data-agent
+  name: {{ $namespace }}-reloader-role
 ---
 {{- end }}
 
@@ -55,3 +55,19 @@ roleRef:
 
 
 
+{{- range $namespace := .Values.workspace.namespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+  name: {{ $namespace }}-e6data-agent-rolebinding
+  namespace: {{ $namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: agent2-grafana-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $namespace }}-reloader-role
+---
+{{- end }}

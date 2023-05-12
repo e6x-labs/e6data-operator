@@ -14,6 +14,11 @@ serviceAccounts:
     name: ""
     annotations: {}
 
+workspace:
+  namespaces:
+    - test1
+    - test2
+
 server:
   ## Platform-operator server container name
   ##
@@ -65,10 +70,7 @@ server:
   ##       key: username
   env: []
 
-  workspace:
-    namepsaces:
-      - test1
-      - test2
+
 
   ingress:
     ## If true, Platform-operator server Ingress will be created
@@ -95,7 +97,7 @@ server:
     ##
     # hosts: []
     hosts:
-      - plat.e6xlabs.cloud
+      - modi.e6xlabs.cloud
     #   - Platform-operator.domain.com
     #   - domain.com/Platform-operator
 
@@ -116,9 +118,9 @@ server:
     ##
     # tls: []
     tls:
-      - secretName: plat-tls-secret
+      - secretName: my-tls-secret
         hosts:
-          - plat.e6xlabs.cloud
+          - modi.e6xlabs.cloud
 
   ## Server Deployment Strategy type
   strategy:
@@ -136,8 +138,7 @@ server:
   ## Node labels for Platform-operator server pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   ##
-  nodeSelector:
-    cloud.google.com/gke-nodepool: e6-nodepool 
+  nodeSelector: {}
 
   ## Pod affinity
   ##

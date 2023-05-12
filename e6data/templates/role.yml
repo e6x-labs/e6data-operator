@@ -75,106 +75,45 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: e6data-agent
+  name: {{ $namespace }}-reloader-role
   namespace: {{ $namespace }}
 rules:
-  # Rules which allow discovery.kubernetes to function.
-  - apiGroups:
-      - ""
-      - "discovery.k8s.io"
-      - "networking.k8s.io"
-    resources:
-      - endpoints
-      - endpointslices
-      - ingresses
-      - nodes
-      - nodes/proxy
-      - pods
-      - services
-    verbs:
-      - get
-      - list
-      - watch
-  # Rules which allow loki.source.kubernetes and loki.source.podlogs to work.
-  - apiGroups:
-      - ""
-    resources:
-      - pods
-      - pods/log
-      - namespaces
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - "monitoring.grafana.com"
-    resources:
-      - podlogs
-    verbs:
-      - get
-      - list
-      - watch
-  # Rules which allow mimir.rules.kubernetes to work.
-  - apiGroups: ["monitoring.coreos.com"]
-    resources:
-      - prometheusrules
-    verbs:
-      - get
-      - list
-      - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - list
+  - get
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - list
+  - get
+  - update
+  - patch
+- apiGroups:
+  - extensions
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - list
+  - get
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
 
 ---
 {{- end }}
 
-
-{{- range $namespace := .Values.workspace.namespaces }}
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: Role
-  metadata:
-    annotations:
-      kubectl.kubernetes.io/last-applied-configuration: |
-        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"name":"reloader-reloader-role","namespace":"default"},"rules":[{"apiGroups":[""],"resources":["configmaps"],"verbs":["list","get","watch"]},{"apiGroups":["apps"],"resources":["deployments","statefulsets"],"verbs":["list","get","update","patch"]},{"apiGroups":["extensions"],"resources":["deployments","statefulsets"],"verbs":["list","get","update","patch"]},{"apiGroups":[""],"resources":["events"],"verbs":["create","patch"]}]}
-    creationTimestamp: "2023-05-04T12:23:41Z"
-    name: reloader-reloader-role
-    namespace: {{ $namespace }}
-    resourceVersion: "5342122"
-    uid: 97c91b30-7f6b-4e09-bf00-4201ccba2e62
-  rules:
-  - apiGroups:
-    - ""
-    resources:
-    - configmaps
-    verbs:
-    - list
-    - get
-    - watch
-  - apiGroups:
-    - apps
-    resources:
-    - deployments
-    - statefulsets
-    verbs:
-    - list
-    - get
-    - update
-    - patch
-  - apiGroups:
-    - extensions
-    resources:
-    - deployments
-    - statefulsets
-    verbs:
-    - list
-    - get
-    - update
-    - patch
-  - apiGroups:
-    - ""
-    resources:
-    - events
-    verbs:
-    - create
-    - patch
-
----
-{{- end }}

@@ -1,3 +1,4 @@
+
 {{- if .Values.server.ingress.enabled -}}
 {{- $ingressApiIsStable := eq (include "ingress.isStable" .) "true" -}}
 {{- $ingressSupportsIngressClassName := eq (include "ingress.supportsIngressClassName" .) "true" -}}
@@ -21,7 +22,6 @@ metadata:
     {{ $key }}: {{ $value }}
 {{- end }}
   name: {{ template "e6data.server.fullname" . }}
-{{ include "e6data.namespace" . | indent 2 }}
 spec:
   {{- if and $ingressSupportsIngressClassName .Values.server.ingress.ingressClassName }}
   ingressClassName: {{ .Values.server.ingress.ingressClassName }}

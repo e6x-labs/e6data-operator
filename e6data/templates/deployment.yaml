@@ -1,3 +1,4 @@
+
 apiVersion: {{ template "e6data.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
@@ -8,7 +9,6 @@ metadata:
   labels:
     {{- include "e6data.server.labels" . | nindent 4 }}
   name: {{ template "e6data.server.fullname" . }}
-{{ include "e6data.namespace" . | indent 2 }}
 spec:
   selector:
     matchLabels:
