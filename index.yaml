@@ -3,11 +3,11 @@ entries:
   e6data:
   - apiVersion: v2
     appVersion: v0.1.1
-    created: "2023-05-12T13:20:53.106802+05:30"
-    digest: 59bf5d26498979bc854444703ccfc4abff8d2cc8860f50415cf59ed95dbc2ecc
+    created: "2023-05-12T13:29:36.720767+05:30"
+    digest: 59ddf06b277330f91c0fe9b009a22c35a8b0bd63a43223d1e8010ea8781f1403
     kubeVersion: '>=1.16.0-0'
     name: e6data
     urls:
-    - https://github.com/e6x-labs/e6data-operator/blob/main/e6data-0.1.0.tgz
+    - https://e6x-labs.github.io/e6data-operator/e6data-0.1.0.tgz
     version: 0.1.0
-generated: "2023-05-12T13:20:53.099798+05:30"
+generated: "2023-05-12T13:29:36.715045+05:30"
