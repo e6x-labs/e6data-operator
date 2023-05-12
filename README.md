@@ -12,7 +12,7 @@ This chart bootstraps a [e6data](https://e6data.io/) deployment on a [Kubernetes
 ## Get Repository Info
 
 ```console
-helm repo add e6data-community https://raw.githubusercontent.com/e6x-labs/e6data-operator/main/
+helm repo add e6data-operator  https://raw.githubusercontent.com/e6x-labs/e6data-operator/main
 helm repo update
 ```
 
