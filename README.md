@@ -36,7 +36,7 @@ _See [helm install](https://helm.sh/docs/helm/helm_install/) for command documen
 Update these blocks in values.yaml:
 
 host:
-```
+```console
     hosts:
       - <valid domain>
 ```
