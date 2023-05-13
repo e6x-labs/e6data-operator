@@ -18,18 +18,49 @@ helm repo update
 
 _See [helm repository](https://helm.sh/docs/helm/helm_repo/) for command documentation._
 
+## Secret
+
+You need to create a secret for accessing the image for the e6data-operator
+
+```console
+kubectl create secret tls [SECRET_NAME] \
+--key ca.key \
+--cert ca.crt
+```
+
+
 ## Install Chart
 
 Start from Version 16.0, e6data chart required Helm 3.7+ in order to install successfully. Please check your Helm chart version before installation.
 
 ```console
-helm install [RELEASE_NAME] e6data-operator/e6data
+helm install [RELEASE_NAME] e6data-operator/e6data 
+
+```
+
+custom values.yaml
+
+```console
+
+helm install [RELEASE_NAME] e6data-operator/e6data --values [/path/to/values.yaml]
+
+```
+
+setting values direclty from the installation command:
+
+```console
+helm install [RELEASE_NAME] e6data-operator/e6data \
+  --set ingress.hosts[0]=example.com \
+  --set workspace.namespaces[+1]=test3 \
+  --set ingress.tls[0].secretName=example-tls-secret \
+  --set ingress.tls[0].hosts[0]=example.com
 
 ```
 
 _See [configuration](#configuration) below._
 
 _See [helm install](https://helm.sh/docs/helm/helm_install/) for command documentation._
+
 
 ## Values
 
@@ -62,6 +93,8 @@ workspace:
 ```
 
 
+
+
 _See [helm dependency](https://helm.sh/docs/helm/helm_dependency/) for command documentation._
 
 ## Uninstall Chart
@@ -76,9 +109,30 @@ _See [helm uninstall](https://helm.sh/docs/helm/helm_uninstall/) for command doc
 
 ## Upgrading Chart
 
+updating the helm chart
+
 ```console
 helm upgrade [RELEASE_NAME] [CHART] --install
 ```
+
+updating the helm chart with custom values.yaml
+
+```console
+
+helm install [RELEASE_NAME] e6data-operator/e6data --values [/path/to/values.yaml]
+
+```
+
+updating the helm chart by setting values direclty from command:
+
+```console
+helm upgrade [RELEASE_NAME] e6data-operator/e6data \
+  --set ingress.hosts[0]=example.com \
+  --set workspace.namespaces[+1]=test3 \
+  --set ingress.tls[0].secretName=example-tls-secret \
+  --set ingress.tls[0].hosts[0]=example.com
+```
+
 
 _See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command documentation._
 
