@@ -31,12 +31,35 @@ _See [configuration](#configuration) below._
 
 _See [helm install](https://helm.sh/docs/helm/helm_install/) for command documentation._
 
-## Dependencies
+## Values
 
-By default this chart installs additional, dependent charts:
+Update these blocks in values.yaml:
 
-- Domain in values.yaml
+host:
+```
+    hosts:
+      - <valid domain>
+```
 
+TLS:
+
+```console
+
+    tls:
+      - secretName: plat-tls-secret
+        hosts:
+          - <valid domain>
+```
+
+Workspace namespaces:
+```console
+
+workspace:
+  namespaces:
+    - namespace1
+    - namespace2
+
+```
 
 
 _See [helm dependency](https://helm.sh/docs/helm/helm_dependency/) for command documentation._
@@ -50,10 +73,6 @@ helm uninstall [RELEASE_NAME]
 This removes all the Kubernetes components associated with the chart and deletes the release.
 
 _See [helm uninstall](https://helm.sh/docs/helm/helm_uninstall/) for command documentation._
-
-## Updating values.schema.json
-
-A [`values.schema.json`](https://helm.sh/docs/topics/charts/#schema-files) file has been added to validate chart values. When `values.yaml` file has a structure change (i.e. add a new field, change value type, etc.), modify `values.schema.json` file manually or run `helm schema-gen values.yaml > values.schema.json` to ensure the schema is aligned with the latest values. Refer to [helm plugin `helm-schema-gen`](https://github.com/karuppiah7890/helm-schema-gen) for plugin installation instructions.
 
 ## Upgrading Chart
 
