@@ -27,6 +27,9 @@ gcloud container node-pools create NODEPOOL_NAME \
     --cluster=CLUSTER_NAME \
     --region=COMPUTE_REGION \
     --machine-type=c2-standard-30 \
+    --enable-autoscaling \
+    --min-nodes=1 \
+    --max-nodes=10 \    
     --workload-metadata=GKE_METADATA
 
 ```
