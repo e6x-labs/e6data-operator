@@ -6,8 +6,30 @@ This chart bootstraps a [e6data](https://e6data.io/) deployment on a [Kubernetes
 
 ## Prerequisites
 
+### Tools
 - Kubernetes 1.16+
 - Helm 3.7+
+
+### Secret
+
+You need to create a tls secret 
+
+```console
+kubectl create secret tls [SECRET_NAME] \
+--key ca.key \
+--cert ca.crt
+```
+### Create GKE nodepool WITH C2-STANDARD-30 as machine type
+Please enable autscaler and workload identity pool for the node pool 
+
+```console
+gcloud container node-pools create NODEPOOL_NAME \
+    --cluster=CLUSTER_NAME \
+    --region=COMPUTE_REGION \
+    --machine-type=c2-standard-30 \
+    --workload-metadata=GKE_METADATA
+
+```
 
 ## Get Repository Info
 
@@ -18,15 +40,7 @@ helm repo update
 
 _See [helm repository](https://helm.sh/docs/helm/helm_repo/) for command documentation._
 
-## Secret
 
-You need to create a secret for accessing the image for the e6data-operator
-
-```console
-kubectl create secret tls [SECRET_NAME] \
---key ca.key \
---cert ca.crt
-```
 
 
 ## Install Chart
@@ -50,13 +64,28 @@ setting values direclty from the installation command:
 
 ```console
 helm install [RELEASE_NAME] e6data-operator/e6data \
-  --set ingress.hosts[0]=example.com \
+  --set server.ingress.hosts[0]=example.com \
   --set workspace.namespaces[0]=test1 \
   --set workspace.namespaces[1]=test2 \
-  --set ingress.tls[0].secretName=example-tls-secret \
-  --set ingress.tls[0].hosts[0]=example.com
+  --set server.ingress.tls[0].secretName=example-tls-secret \
+  --set server.ingress.tls[0].hosts[0]=example.com
 
 ```
+
+Alternatively, you can escape the brackets with a backslash, like this if you face error due to noglob:
+
+
+```console
+helm install [RELEASE_NAME] e6data-operator/e6data \
+  --set server.ingress.hosts\[0\]=example.com \
+  --set workspace.namespaces\[0\]=test1 \
+  --set workspace.namespaces\[1\]=test2 \
+  --set server.ingress.tls\[0\].secretName=example-tls-secret \
+  --set server.ingress.tls\[0\].hosts\[0\]=example.com
+
+```
+
+
 
 _See [configuration](#configuration) below._
 
@@ -128,13 +157,24 @@ updating the helm chart by setting values direclty from command:
 
 ```console
 helm upgrade [RELEASE_NAME] e6data-operator/e6data \
-  --set ingress.hosts[0]=example.com \
+  --set server.ingress.hosts[0]=example.com \
   --set workspace.namespaces[0]=test1 \
   --set workspace.namespaces[1]=test2 \
-  --set ingress.tls[0].secretName=example-tls-secret \
-  --set ingress.tls[0].hosts[0]=example.com
+  --set server.ingress.tls[0].secretName=example-tls-secret \
+  --set server.ingress.tls[0].hosts[0]=example.com
 ```
 
+Alternatively, you can escape the brackets with a backslash, like this if you face error due to noglob:
+
+
+```console
+helm upgrade [RELEASE_NAME] e6data-operator/e6data \
+  --set server.ingress.hosts\[0\]=example.com \
+  --set workspace.namespaces\[0\]=test1 \
+  --set workspace.namespaces\[1\]=test2 \
+  --set server.ingress.tls\[0\].secretName=example-tls-secret \
+  --set server.ingress.tls\[0\].hosts\[0\]=example.com
+```
 
 _See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command documentation._
 
