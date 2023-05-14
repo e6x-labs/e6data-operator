@@ -51,7 +51,8 @@ setting values direclty from the installation command:
 ```console
 helm install [RELEASE_NAME] e6data-operator/e6data \
   --set ingress.hosts[0]=example.com \
-  --set workspace.namespaces[+1]=test3 \
+  --set workspace.namespaces[0]=test1 \
+  --set workspace.namespaces[1]=test2 \
   --set ingress.tls[0].secretName=example-tls-secret \
   --set ingress.tls[0].hosts[0]=example.com
 
@@ -128,7 +129,8 @@ updating the helm chart by setting values direclty from command:
 ```console
 helm upgrade [RELEASE_NAME] e6data-operator/e6data \
   --set ingress.hosts[0]=example.com \
-  --set workspace.namespaces[+1]=test3 \
+  --set workspace.namespaces[0]=test1 \
+  --set workspace.namespaces[1]=test2 \
   --set ingress.tls[0].secretName=example-tls-secret \
   --set ingress.tls[0].hosts[0]=example.com
 ```
