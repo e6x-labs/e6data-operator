@@ -30,7 +30,9 @@ gcloud container node-pools create NODEPOOL_NAME \
     --enable-autoscaling \
     --min-nodes=1 \
     --max-nodes=10 \    
+    --preemptible \
     --workload-metadata=GKE_METADATA
+    
 
 ```
 
