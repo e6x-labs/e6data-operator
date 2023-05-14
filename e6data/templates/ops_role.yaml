@@ -61,6 +61,7 @@ rules:
       - deployments
       - daemonsets
       - statefulsets
+      - daemonsets/status
     verbs:
       - get
       - list
