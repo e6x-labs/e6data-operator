@@ -19,10 +19,10 @@ WRITE_ROLE_ID=$6
 READ_ROLE_ID=$7
 
 
-# GSA_NAME=${10}
-# GSA_PROJECT=${11}
-# NAMESPACE=${12}
-# KSA_NAME=${13}
+GSA_NAME=$8
+GSA_PROJECT=$9
+NAMESPACE=${10}
+KSA_NAME=${11}
 
 # Create GCS BUCKET_NAME
 gcloud storage buckets create ${BUCKET} --location=${REGION} --project=${PROJECT_ID}
