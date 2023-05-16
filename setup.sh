@@ -17,7 +17,7 @@ WORKSPACE_NAMESPACE=$4 # Namespace for workspace
 
 
 if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]; then
-  echo "Usage: ./script.sh <region> <project_id> <operator_namespace> <workspace_namespace>"
+  echo "Usage: ./setup.sh <region> <project_id> <operator_namespace> <workspace_namespace>"
 exit 1
 fi
 
@@ -111,4 +111,4 @@ gcloud iam service-accounts add-iam-policy-binding ${ENGINE_SA_EMAIL} \
     --role roles/iam.workloadIdentityUser \
     --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${WORKSPACE_NAMESPACE}/${WORKSPACE_NAMESPACE}]"
 
-#bash script.sh [REGION] [PROJECT_ID] [OPERATOR_NAMESPACE] [WORKSPACE_NAMESPACE]
+#bash setup.sh [REGION] [PROJECT_ID] [OPERATOR_NAMESPACE] [WORKSPACE_NAMESPACE]
