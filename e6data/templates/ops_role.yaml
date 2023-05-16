@@ -82,7 +82,7 @@ metadata:
   namespace: {{ $namespace }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "e6data.serviceAccountName.server" $dot }}
+    name: e6data-operator
   {{ include "e6data.namespace" $dot | indent 2 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io

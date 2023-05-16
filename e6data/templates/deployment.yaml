@@ -34,7 +34,7 @@ spec:
 {{- if .Values.server.priorityClassName }}
       priorityClassName: "{{ .Values.server.priorityClassName }}"
 {{- end }}
-      serviceAccountName: {{ template "e6data.serviceAccountName.server" . }}
+      serviceAccountName: e6data-operator
       containers:
         - name: {{ template "e6data.name" . }}-{{ .Values.server.name }}
           {{- if .Values.server.image.digest }}
