@@ -17,7 +17,7 @@ WORKSPACE_NAMESPACE=$4 # Namespace for workspace
 
 
 if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]; then
-  echo "Usage: ./script.sh <region> <project_id> <operator_namespace> <workspace_namespace>"
+  echo "Usage: ./script.sh <region> <project_id>"
   exit 1
 fi
 
@@ -35,7 +35,7 @@ COMMON_NAME_ROLES="e6data_${WORKSPACE_NAMESPACE}_${UUID}"
 
 
 # Create GCS COMMON_NAME
-gcloud storage buckets create ${COMMON_NAME} --location=${REGION} --project=${PROJECT_ID}
+gcloud storage buckets create gs://${COMMON_NAME} --location=${REGION} --project=${PROJECT_ID}
 
 # Create write SA
 gcloud iam service-accounts create ${COMMON_NAME}-platform --description "e6data service account for platform access" --display-name "${COMMON_NAME}-platform" --project ${PROJECT_ID}
@@ -84,7 +84,7 @@ PLATFORM_SA_EMAIL="${COMMON_NAME}-platform@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${PLATFORM_SA_EMAIL} \
     --role=projects/${PROJECT_ID}/roles/${COMMON_NAME_ROLES}_platform  \
-    --condition="title=${COMMON_NAME}-platform-access,description=Access to ${COMMON_NAME} bucket,expression=resource.name.startsWith("projects/_/buckets/${COMMON_NAME}/")"
+    --condition="title=${COMMON_NAME}-platform-access,description=Access to ${COMMON_NAME} bucket,expression=resource.name.startsWith(\"projects/_/buckets/${COMMON_NAME}/\")"
 
 
 ENGINE_SA_EMAIL="${COMMON_NAME}-engine@${PROJECT_ID}.iam.gserviceaccount.com"
@@ -111,8 +111,4 @@ gcloud iam service-accounts add-iam-policy-binding ${ENGINE_SA_EMAIL} \
     --role roles/iam.workloadIdentityUser \
     --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${WORKSPACE_NAMESPACE}/${WORKSPACE_NAMESPACE}]"
 
-
-
-
-#bash script.sh [COMMON_NAME] [REGION] [PROJECT_ID] [WRITE_SA_NAME] [READ_SA_NAME] [READ_SA_NAME] [WRITE_ROLE_ID] [READ_ROLE_ID] [GSA_NAME] [GSA_PROJECT] [NAMESPACE] [KSA_NAME]
-
+#bash script.sh [REGION] [PROJECT_ID] [OPERATOR_NAMESPACE] [WORKSPACE_NAMESPACE]
