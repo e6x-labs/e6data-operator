@@ -17,8 +17,8 @@ WORKSPACE_NAMESPACE=$4 # Namespace for workspace
 
 
 if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]; then
-  echo "Usage: ./script.sh <region> <project_id>"
-  exit 1
+  echo "Usage: ./script.sh <region> <project_id> <operator_namespace> <workspace_namespace>"
+exit 1
 fi
 
 UUID=""
