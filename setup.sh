@@ -104,7 +104,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 # Add workload binding
 gcloud iam service-accounts add-iam-policy-binding ${PLATFORM_SA_EMAIL} \
     --role roles/iam.workloadIdentityUser \
-    --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${OPERATOR_NAMESPACE}/${OPERATOR_NAMESPACE}]"
+    --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${OPERATOR_NAMESPACE}/e6data-operator]"
 
 
 gcloud iam service-accounts add-iam-policy-binding ${ENGINE_SA_EMAIL} \
