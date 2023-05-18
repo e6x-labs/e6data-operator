@@ -43,10 +43,11 @@ create e6data-${UUID}-nodepool \
 --region=${REGION} \
 --machine-type=c2-standard-30 \
 --enable-autoscaling \
---min-nodes=1 \
---max-nodes=${MAX_INSTANCES_IN_NODEGROUP} \
---preemptible \
---workload-metadata=GKE_METADATA
+--total-min-nodes=1 \
+--total-max-nodes=${MAX_INSTANCES_IN_NODEGROUP} \
+--spot \
+--workload-metadata=GKE_METADATA \
+--location-policy=ANY
 
 
 # Create GCS COMMON_NAME
