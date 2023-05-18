@@ -9,6 +9,13 @@ This chart bootstraps a [e6data](https://e6data.io/) deployment on a [Kubernetes
 ### Tools
 - Kubernetes 1.16+
 - Helm 3.7+
+- google cli
+
+### Permission to run the script
+- roles/storage.admin
+- roles/iam.serviceAccountAdmin
+- roles/iam.roleAdmin
+- roles/iam.workloadIdentityUser
 
 ### Secret
 
