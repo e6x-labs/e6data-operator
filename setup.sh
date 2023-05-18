@@ -31,7 +31,6 @@ echo
 
 
 gcloud container node-pools create NODEPOOL_NAME --cluster=${CLUSTER_NAME} --region=${REGION} --machine-type=c2-standard-30 --enable-autoscaling --min-nodes=1 --max-nodes=10 --preemptible --workload-metadata=GKE_METADATA
-
 COMMON_NAME="e6data-${WORKSPACE_NAMESPACE}-${UUID}"
 
 COMMON_NAME_ROLES="e6data_${WORKSPACE_NAMESPACE}_${UUID}"
@@ -114,4 +113,4 @@ gcloud iam service-accounts add-iam-policy-binding ${ENGINE_SA_EMAIL} \
     --role roles/iam.workloadIdentityUser \
     --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${WORKSPACE_NAMESPACE}/${WORKSPACE_NAMESPACE}]"
 
-#bash setup.sh [REGION] [PROJECT_ID] [OPERATOR_NAMESPACE] [WORKSPACE_NAMESPACE]
+#bash setup.sh [REGION] [PROJECT_ID] [OPERATOR_NAMESPACE] [WORKSPACE_NAMESPACE] [CLUSTER_NAME]

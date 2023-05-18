@@ -4,7 +4,7 @@ PROJECT_ID=$2
 OPERATOR_NAMESPACE=$3
 WORKSPACE_NAMESPACE=$4
 UUID=$5
-CLUSTER_NAME=$6 # Cluster name for the kubernetes
+CLUSTER_NAME=$6 
 
 
 COMMON_NAME="e6data-${WORKSPACE_NAMESPACE}-${UUID}"
@@ -49,8 +49,6 @@ gcloud storage buckets delete ${COMMON_NAME} --project=${PROJECT_ID}
 
 # delete node pool
 gcloud container node-pools delete NODEPOOL_NAME --cluster=${CLUSTER_NAME} --region=${REGION}
-
-
 
 
 
