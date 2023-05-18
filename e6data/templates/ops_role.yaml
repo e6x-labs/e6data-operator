@@ -62,13 +62,16 @@ rules:
       - daemonsets
       - statefulsets
       - daemonsets/status
+      - deployments/status
+      - statefulsets/status
     verbs:
       - get
       - list
       - watch 
       - create
       - update
-      - delete      
+      - delete  
+      - patch    
 {{- end }}
 
 ---
