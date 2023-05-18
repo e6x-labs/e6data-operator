@@ -1,0 +1,13 @@
+gcloud config set project proven-outpost-351604
+
+gcloud container clusters get-credentials demo-cluster-zeotap --region us-central1 --project proven-outpost-351604
+
+kubectl create ns e6operator
+
+kubectl create secret tls e6data-operator-tls -n e6operator \
+/Users/srinathprabhu/work/e6-infra-internal/terraform/values/dev/ssl.crt \
+/Users/srinathprabhu/work/e6-infra-internal/terraform/values/dev/ssl.key
+
+git clone https://github.com/e6x-labs/e6data-operator
+
+./setup.sh us-central1 proven-outpost-351604 e6operator e6data demo-cluster-zeotap
