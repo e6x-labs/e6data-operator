@@ -7,9 +7,9 @@ PROJECT_ID=$2  # GCP project ID
 OPERATOR_NAMESPACE=$3 # Namespace for e6data operator
 WORKSPACE_NAMESPACE=$4 # Namespace for workspace 
 CLUSTER_NAME=$5 # Cluster name for the kubernetes
-
-if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" || -z "$5" ]]; then
-  echo "Usage: ./setup.sh <region> <project_id> <operator_namespace> <workspace_namespace> <cluster_name>"
+MAX_INSTANCES_IN_NODEGROUP=$6 # Max VMs to be created in GKE nodegroup
+if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" || -z "$5" || -z "$6" ]]; then
+  echo "Usage: ./setup.sh <region> <project_id> <operator_namespace> <workspace_namespace> <cluster_name> <max_nodegroup_instances>"
 exit 1
 fi
 
@@ -42,7 +42,7 @@ create e6data-${UUID}-nodepool \
 --machine-type=c2-standard-30 \
 --enable-autoscaling \
 --min-nodes=1 \
---max-nodes=10 \
+--max-nodes=${MAX_INSTANCES_IN_NODEGROUP} \
 --preemptible \
 --workload-metadata=GKE_METADATA
 
@@ -125,3 +125,14 @@ gcloud iam service-accounts add-iam-policy-binding ${ENGINE_SA_EMAIL} \
     --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${WORKSPACE_NAMESPACE}/${WORKSPACE_NAMESPACE}]"
 
 #bash setup.sh [REGION] [PROJECT_ID] [OPERATOR_NAMESPACE] [WORKSPACE_NAMESPACE] [CLUSTER_NAME]
+
+
+echo "------------Outputs required for helm script------------"
+echo "GKE_NODEGROUP_NAME=e6data-${UUID}-nodepool"
+echo "GKE_NODEGROUP_MAX_INSTANCES=${MAX_INSTANCES_IN_NODEGROUP}"
+echo "E6DATA_GCS_BUCKET_NAME=${COMMON_NAME}"
+echo "E6DATA_OPERATOR_GSA_EMAIL=${PLATFORM_SA_EMAIL}"
+echo "E6DATA_WORKSPACE_GSA_EMAIL=${ENGINE_SA_EMAIL}"
+echo "E6DATA_OPERATOR_NAMESPACE=${OPERATOR_NAMESPACE}"
+echo "E6DATA_WORKSPACE_NAMESPACE=${WORKSPACE_NAMESPACE}"
+echo "--------------------------------------------------------"
