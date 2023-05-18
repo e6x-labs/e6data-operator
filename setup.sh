@@ -2,42 +2,53 @@
 # pattern for role name : "[a-zA-Z0-9_\.]{3,64}"
 # pattern for service account name:  [a-zA-Z][a-zA-Z\d\-]*[a-zA-Z\d]
 
-UUID=""
-for i in {1..6}; do
-  UUID="${UUID}$(($RANDOM % 10))"
-done
-
-echo "UUID:${UUID}"
-
 REGION=$1 # Region for infra
 PROJECT_ID=$2  # GCP project ID
 OPERATOR_NAMESPACE=$3 # Namespace for e6data operator
 WORKSPACE_NAMESPACE=$4 # Namespace for workspace 
 CLUSTER_NAME=$5 # Cluster name for the kubernetes
 
-
-
 if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" || -z "$5" ]]; then
   echo "Usage: ./setup.sh <region> <project_id> <operator_namespace> <workspace_namespace> <cluster_name>"
 exit 1
 fi
 
+case "$region" in
+  northamerica-northeast1|northamerica-northeast2|southamerica-east1|southamerica-west1|us-central1|us-east1|us-east4|us-east5|us-south1|us-west1|us-west2|us-west3|us-west4)
+    LOCATION="us"
+    ;;
+  europe-central2|europe-north1|europe-southwest1|europe-west1|europe-west12|europe-west2|europe-west3|europe-west4|europe-west6|europe-west8|europe-west9)
+    LOCATION="eu"
+    ;;
+  asia-east1|asia-east2|asia-northeast1|asia-northeast2|asia-northeast3|asia-south1|asia-south2|asia-southeast1|asia-southeast2)
+    LOCATION="asia"
+    ;;
+  *)
+    echo "GCP region not supported by e6data. Please contact e6data team for further support"      
+esac
+
+COMMON_NAME="e6data-${WORKSPACE_NAMESPACE}-${UUID}"
+COMMON_NAME_ROLES="e6data_${WORKSPACE_NAMESPACE}_${UUID}"
 UUID=""
+
 for i in {1..6}; do
   UUID="${UUID}$(($RANDOM % 10))"
 done
 
-echo 
-
-
-gcloud container node-pools create e6data-${UUID}-nodepool --cluster=${CLUSTER_NAME} --region=${REGION} --machine-type=c2-standard-30 --enable-autoscaling --min-nodes=1 --max-nodes=10 --preemptible --workload-metadata=GKE_METADATA
-COMMON_NAME="e6data-${WORKSPACE_NAMESPACE}-${UUID}"
-
-COMMON_NAME_ROLES="e6data_${WORKSPACE_NAMESPACE}_${UUID}"
+gcloud container node-pools \
+create e6data-${UUID}-nodepool \
+--cluster=${CLUSTER_NAME} \
+--region=${REGION} \
+--machine-type=c2-standard-30 \
+--enable-autoscaling \
+--min-nodes=1 \
+--max-nodes=10 \
+--preemptible \
+--workload-metadata=GKE_METADATA
 
 
 # Create GCS COMMON_NAME
-gcloud storage buckets create gs://${COMMON_NAME} --location=${REGION} --project=${PROJECT_ID}
+gcloud storage buckets create gs://${COMMON_NAME} --location=${LOCATION} --project=${PROJECT_ID}
 
 # Create write SA
 gcloud iam service-accounts create ${COMMON_NAME}-platform --description "e6data service account for platform access" --display-name "${COMMON_NAME}-platform" --project ${PROJECT_ID}
