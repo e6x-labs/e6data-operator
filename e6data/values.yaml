@@ -6,6 +6,10 @@ podSecurityPolicy:
 
 imagePullSecrets: []
 
+gcpSaEmail:
+  operator: "hello@123.com"
+  workspace: ""
+
 ## Define serviceAccount names for components. Defaults to component's fully qualified name.
 ##
 serviceAccounts:
@@ -28,7 +32,7 @@ server:
   image:
     repository: us-docker.pkg.dev/e6data-analytics/e6-platform-public/plat-operator
     # if not set appVersion field from Chart.yaml is used
-    tag: "1.0.19"
+    tag: "1.0.33"
     # When digest is set to a non-empty value, images will be pulled by digest (regardless of tag value).
     digest: ""
     pullPolicy: Always
