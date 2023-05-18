@@ -1,3 +1,21 @@
+
+Please enable autscaler and workload identity pool for the node pool 
+
+```console
+gcloud container node-pools create NODEPOOL_NAME \
+    --cluster=CLUSTER_NAME \
+    --region=COMPUTE_REGION \
+    --machine-type=c2-standard-30 \
+    --enable-autoscaling \
+    --min-nodes=1 \
+    --max-nodes=10 \    
+    --preemptible \
+    --workload-metadata=GKE_METADATA
+    
+
+```
+
+
 Create a GCS bucket
 ```console
 gcloud storage buckets create [BUCKET] --location=[REGION] --project=[PROJECT ID]

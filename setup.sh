@@ -13,11 +13,12 @@ REGION=$1 # Region for infra
 PROJECT_ID=$2  # GCP project ID
 OPERATOR_NAMESPACE=$3 # Namespace for e6data operator
 WORKSPACE_NAMESPACE=$4 # Namespace for workspace 
+CLUSTER_NAME=$5 # Cluster name for the kubernetes
 
 
 
-if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" ]]; then
-  echo "Usage: ./setup.sh <region> <project_id> <operator_namespace> <workspace_namespace>"
+if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" || -z "$5" ]]; then
+  echo "Usage: ./setup.sh <region> <project_id> <operator_namespace> <workspace_namespace> <cluster_name>"
 exit 1
 fi
 
@@ -29,6 +30,7 @@ done
 echo 
 
 
+gcloud container node-pools create NODEPOOL_NAME --cluster=${CLUSTER_NAME} --region=${REGION} --machine-type=c2-standard-30 --enable-autoscaling --min-nodes=1 --max-nodes=10 --preemptible --workload-metadata=GKE_METADATA
 COMMON_NAME="e6data-${WORKSPACE_NAMESPACE}-${UUID}"
 
 COMMON_NAME_ROLES="e6data_${WORKSPACE_NAMESPACE}_${UUID}"
@@ -111,4 +113,4 @@ gcloud iam service-accounts add-iam-policy-binding ${ENGINE_SA_EMAIL} \
     --role roles/iam.workloadIdentityUser \
     --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${WORKSPACE_NAMESPACE}/${WORKSPACE_NAMESPACE}]"
 
-#bash setup.sh [REGION] [PROJECT_ID] [OPERATOR_NAMESPACE] [WORKSPACE_NAMESPACE]
+#bash setup.sh [REGION] [PROJECT_ID] [OPERATOR_NAMESPACE] [WORKSPACE_NAMESPACE] [CLUSTER_NAME]
