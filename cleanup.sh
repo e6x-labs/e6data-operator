@@ -41,8 +41,8 @@ gcloud iam roles delete ${COMMON_NAME_ROLES}_platform --project ${PROJECT_ID}
 gcloud iam roles delete ${COMMON_NAME_ROLES}_engine --project ${PROJECT_ID}
 
 # Delete the service accounts
-gcloud iam service-accounts delete ${COMMON_NAME}-platform --project ${PROJECT_ID}
-gcloud iam service-accounts delete ${COMMON_NAME}-engine --project ${PROJECT_ID}
+gcloud iam service-accounts delete ${COMMON_NAME}-platform@${PROJECT_ID}.iam.gserviceaccount.com --project ${PROJECT_ID}
+gcloud iam service-accounts delete ${COMMON_NAME}-engine@${PROJECT_ID}.iam.gserviceaccount.com --project ${PROJECT_ID}
 
 # delete the storage bucket
 gcloud storage buckets delete ${COMMON_NAME} --project=${PROJECT_ID}

@@ -97,6 +97,7 @@ rm e6data_engine_access.yaml
 
 PLATFORM_SA_EMAIL="${COMMON_NAME}-platform@${PROJECT_ID}.iam.gserviceaccount.com"
 
+
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${PLATFORM_SA_EMAIL} \
     --role=projects/${PROJECT_ID}/roles/${COMMON_NAME_ROLES}_platform  \
@@ -104,6 +105,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 
 
 ENGINE_SA_EMAIL="${COMMON_NAME}-engine@${PROJECT_ID}.iam.gserviceaccount.com"
+
 
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${ENGINE_SA_EMAIL} \
@@ -115,7 +117,8 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${ENGINE_SA_EMAIL} \
     --role=projects/${PROJECT_ID}/roles/${COMMON_NAME_ROLES}_engine \
-    --condition=None
+    --condition="None"
+
 
 # Add workload binding
 gcloud iam service-accounts add-iam-policy-binding ${PLATFORM_SA_EMAIL} \
