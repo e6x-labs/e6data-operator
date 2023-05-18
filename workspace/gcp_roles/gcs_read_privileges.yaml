@@ -1,0 +1,7 @@
+title: e6data-dummy-read-access
+description: Custom e6data workspace role for GCS read access 
+stage: GA
+includedPermissions:
+- storage.objects.get
+- storage.objects.list
+- storage.objects.getIamPolicy"

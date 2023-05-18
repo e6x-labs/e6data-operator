@@ -1,9 +1,8 @@
-{{- range $namespace := .Values.workspace.namespaces }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ $namespace }}-ops-role
-  namespace: {{ $namespace }}
+  name: {{ include "e6data.name" . }}-e6data-ops-role
+  {{ include "e6data.namespace" . }}
 rules:
   - apiGroups:
       - ""
@@ -73,24 +72,19 @@ rules:
       - update
       - delete  
       - patch    
-{{- end }}
 
 ---
-{{- $dot := . }}
-{{- range $namespace := .Values.workspace.namespaces }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-  name: {{ $namespace }}-ops-role-binding
-  namespace: {{ $namespace }}
+  name: {{ include "e6data.name" . }}-e6data-ops-role-binding
+  {{ include "e6data.namespace" . }}
 subjects:
   - kind: ServiceAccount
     name: e6data-operator
-  {{ include "e6data.namespace" $dot | indent 2 }}
+    namespace: {{ .Values.operator.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ $namespace }}-ops-role
----
-{{- end }}
+  name: {{ include "e6data.name" . }}-e6data-ops-role

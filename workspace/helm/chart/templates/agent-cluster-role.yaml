@@ -1,0 +1,66 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "e6data.name" . }}-e6data-agent
+rules:
+- apiGroups:
+  - ""
+  - discovery.k8s.io
+  - networking.k8s.io
+  resources:
+  - endpoints
+  - endpointslices
+  - ingresses
+  - nodes
+  - nodes/proxy
+  - pods
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - monitoring.grafana.com
+  resources:
+  - podlogs
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - prometheusrules
+  verbs:
+  - get
+  - list
+  - watch
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+  name: {{ include "e6data.name" . }}-e6data-agent-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "e6data.name" . }}-e6data-agent
+    {{ include "e6data.namespace" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "e6data.name" . }}-e6data-agent
