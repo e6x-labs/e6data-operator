@@ -30,7 +30,7 @@ done
 echo 
 
 
-gcloud container node-pools create NODEPOOL_NAME --cluster=${CLUSTER_NAME} --region=${REGION} --machine-type=c2-standard-30 --enable-autoscaling --min-nodes=1 --max-nodes=10 --preemptible --workload-metadata=GKE_METADATA
+gcloud container node-pools create e6data-${UUID}-nodepool --cluster=${CLUSTER_NAME} --region=${REGION} --machine-type=c2-standard-30 --enable-autoscaling --min-nodes=1 --max-nodes=10 --preemptible --workload-metadata=GKE_METADATA
 COMMON_NAME="e6data-${WORKSPACE_NAMESPACE}-${UUID}"
 
 COMMON_NAME_ROLES="e6data_${WORKSPACE_NAMESPACE}_${UUID}"
