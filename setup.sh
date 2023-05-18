@@ -13,7 +13,7 @@ if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" || -z "$5" || -z "$6" ]]; then
 exit 1
 fi
 
-case "$region" in
+case "$REGION" in
   northamerica-northeast1|northamerica-northeast2|southamerica-east1|southamerica-west1|us-central1|us-east1|us-east4|us-east5|us-south1|us-west1|us-west2|us-west3|us-west4)
     LOCATION="us"
     ;;
@@ -27,13 +27,15 @@ case "$region" in
     echo "GCP region not supported by e6data. Please contact e6data team for further support"      
 esac
 
-COMMON_NAME="e6data-${WORKSPACE_NAMESPACE}-${UUID}"
-COMMON_NAME_ROLES="e6data_${WORKSPACE_NAMESPACE}_${UUID}"
 UUID=""
 
 for i in {1..6}; do
   UUID="${UUID}$(($RANDOM % 10))"
 done
+
+COMMON_NAME="e6data-${WORKSPACE_NAMESPACE}-${UUID}"
+COMMON_NAME_ROLES="e6data_${WORKSPACE_NAMESPACE}_${UUID}"
+
 
 gcloud container node-pools \
 create e6data-${UUID}-nodepool \
