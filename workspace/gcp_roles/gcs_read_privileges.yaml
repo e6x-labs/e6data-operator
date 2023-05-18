@@ -4,4 +4,4 @@ stage: GA
 includedPermissions:
 - storage.objects.get
 - storage.objects.list
-- storage.objects.getIamPolicy"
+- storage.objects.getIamPolicy
