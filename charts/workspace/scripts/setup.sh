@@ -6,9 +6,10 @@ REGION=$1 # Region for infra
 PROJECT_ID=$2  # GCP project ID
 WORKSPACE_NAME=$3 # Namespace for workspace 
 CLUSTER_NAME=$4 # Cluster name for the kubernetes
-MAX_INSTANCES_IN_NODEGROUP=$5 # Max VMs to be created in GKE nodegroup
-if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" || -z "$5" ]]; then
-  echo "Usage: ./setup.sh <region> <project_id> <workspace_name> <cluster_name> <max_nodegroup_instances>"
+CLUSTER_ZONE=$5 # Zone for the cluster
+MAX_INSTANCES_IN_NODEGROUP=$6 # Max VMs to be created in GKE nodegroup
+if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" || -z "$5" || -z "$6" ]]; then
+  echo "Usage: ./setup.sh <region> <project_id> <workspace_name> <cluster_name> <cluster_zone> <max_nodegroup_instances>"
 exit 0
 fi
 
@@ -39,16 +40,16 @@ case "$REGION" in
     exit 0    
 esac
 
-WORKSPACE_NAME="e6data-workspace-${WORKSPACE_NAME}"
+WORKSPACE_NAMESPACE="e6data-workspace-${WORKSPACE_NAME}"
 WORKSPACE_WRITE_ROLE_NAME="e6data_${WORKSPACE_NAME}_write"
 WORKSPACE_READ_ROLE_NAME="e6data_${WORKSPACE_NAME}_read"
 COMMON_GCP_FLAGS="--project ${PROJECT_ID} --quiet"
-WORKSPACE_SA_EMAIL="e6data-workspace@${PROJECT_ID}.iam.gserviceaccount.com"
+WORKSPACE_SA_EMAIL="${WORKSPACE_NAMESPACE}@${PROJECT_ID}.iam.gserviceaccount.com"
 
 
-gcloud container node-pools create ${WORKSPACE_NAME} \
+gcloud container node-pools create ${WORKSPACE_NAMESPACE} \
 --cluster=${CLUSTER_NAME} \
---region=${REGION} \
+--zone=${CLUSTER_ZONE} \
 --machine-type=c2-standard-30 \
 --enable-autoscaling \
 --total-min-nodes=1 \
@@ -56,17 +57,19 @@ gcloud container node-pools create ${WORKSPACE_NAME} \
 --spot \
 --workload-metadata=GKE_METADATA \
 --location-policy=ANY \
-${COMMON_GCP_FLAGS}
+${COMMON_GCP_FLAGS} 
+STATUS_CODE=`echo $?`
+status_message "E6DATA_WORKSPACE_NODEPOOL_CREATION" ${STATUS_CODE}
 
-gcloud storage buckets create gs://${WORKSPACE_NAME} --location=${LOCATION} ${COMMON_GCP_FLAGS}
+gcloud storage buckets create gs://${WORKSPACE_NAMESPACE} --location=${LOCATION} ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_BUCKET_CREATION" ${STATUS_CODE}
 
-gcloud iam service-accounts create ${WORKSPACE_NAME} --description "Service account for e6data workspace access" --display-name "${WORKSPACE_NAME}" ${COMMON_GCP_FLAGS}
+gcloud iam service-accounts create ${WORKSPACE_NAMESPACE} --description "Service account for e6data workspace access" --display-name "${WORKSPACE_NAMESPACE}" ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_GCP_SERVICE_ACCOUNT" ${STATUS_CODE} 
 
-find gcp_roles/ -name "*.yaml" -exec sed -i '' "s|dummy|${WORKSPACE_NAME}|g" {} \;
+find gcp_roles/ -name "*.yaml" -exec sed -i '' "s|dummy|${WORKSPACE_NAMESPACE}|g" {} \;
 
 # Create role and binding for writer role
 gcloud iam roles create ${WORKSPACE_WRITE_ROLE_NAME} --file gcp_roles/gcs_write_privileges.yaml ${COMMON_GCP_FLAGS}
@@ -81,7 +84,7 @@ status_message "E6DATA_WORKSPACE_GCP_CUSTOM_ROLE" ${STATUS_CODE}
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${WORKSPACE_SA_EMAIL} \
     --role=projects/${PROJECT_ID}/roles/${WORKSPACE_WRITE_ROLE_NAME} \
-    --condition="title=${WORKSPACE_NAME}-access,description=Write Access to ${WORKSPACE_NAME} GCS bucket,expression=resource.name.startsWith(\"projects/_/buckets/${WORKSPACE_NAME}/\")" \
+    --condition="title=${WORKSPACE_NAMESPACE}-access,description=Write Access to ${WORKSPACE_NAME} GCS bucket,expression=resource.name.startsWith(\"projects/_/buckets/${WORKSPACE_NAMESPACE}/\")" \
     ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_GCS_WRITE_IAM_POLICY_BINDING" ${STATUS_CODE}    
