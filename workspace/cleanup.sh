@@ -22,5 +22,5 @@ gsutil rm -r gs://${WORKSPACE_NAME} ${COMMON_GCP_FLAGS}
 gcloud iam service-accounts delete ${WORKSPACE_NAME} ${COMMON_GCP_FLAGS}
 gcloud iam roles delete ${WORKSPACE_WRITE_ROLE_NAME} ${COMMON_GCP_FLAGS}
 gcloud iam roles delete ${WORKSPACE_READ_ROLE_NAME} ${COMMON_GCP_FLAGS}
-gcloud container node-pools delete ${WORKSPACE_NAME} --cluster=${CLUSTER_NAME} --region=${REGION}
+gcloud container node-pools delete ${WORKSPACE_NAME} --cluster=${CLUSTER_NAME} --region=${REGION} ${COMMON_GCP_FLAGS}
 
