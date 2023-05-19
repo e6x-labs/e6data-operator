@@ -38,10 +38,10 @@ case "$REGION" in
     exit 0    
 esac
 
-OPERATOR_NAME="e6data-kubernetes-operator"
-OPERATOR_ROLE_NAME="e6data_kubernetes_operator"
+OPERATOR_NAME="e6data-operator-${KUBERNETES_OPERATOR_NAMESPACE}"
+OPERATOR_ROLE_NAME="e6data_operator_${KUBERNETES_OPERATOR_NAMESPACE}"
 COMMON_GCP_FLAGS="--project ${PROJECT_ID} --quiet"
-OPERATOR_SA_EMAIL="e6data-kubernetes-operator@${PROJECT_ID}.iam.gserviceaccount.com"
+OPERATOR_SA_EMAIL="e6data-operator-${KUBERNETES_OPERATOR_NAMESPACE}@${PROJECT_ID}.iam.gserviceaccount.com"
 
 gcloud storage buckets create gs://${OPERATOR_NAME} --location=${LOCATION} ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
