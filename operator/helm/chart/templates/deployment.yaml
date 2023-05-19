@@ -43,10 +43,11 @@ spec:
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion}}"
           {{- end }}
           imagePullPolicy: "{{ .Values.server.image.pullPolicy }}"
-          {{- if .Values.server.env }}
+         
           env:
-{{ toYaml .Values.server.env | indent 12}}
-          {{- end }}
+            - name: OPERATOR_BUCKET_NAME
+              value: {{ .Values.server.bucketName }}
+
           ports:
             - containerPort: {{ .Values.server.service.containerPort }}
           readinessProbe:

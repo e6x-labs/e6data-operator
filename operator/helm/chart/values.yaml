@@ -19,6 +19,7 @@ server:
   ##
   name: operator
 
+  bucketName: e6-platform-operator
   ## Platform-operator server container image
   ##
   image:
