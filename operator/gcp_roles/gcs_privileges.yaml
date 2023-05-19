@@ -8,4 +8,4 @@ includedPermissions:
 - storage.objects.update
 - storage.objects.get
 - storage.objects.getIamPolicy
-- storage.objects.setIamPolicy"
+- storage.objects.setIamPolicy
