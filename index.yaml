@@ -18,6 +18,6 @@ entries:
     kubeVersion: '>=1.16.0-0'
     name: workspace
     urls:
-    - https://github.com/e6x-labs/e6data-operator/raw/main/charts/operator/chart/workspace-0.1.0.tgz
+    - https://github.com/e6x-labs/e6data-operator/raw/main/charts/workspace/chart/workspace-0.1.0.tgz
     version: 0.1.0
 generated: "2023-05-19T23:05:28.778195+05:30"
