@@ -108,9 +108,8 @@ STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_BUCKET_DELETION" ${STATUS_CODE}
 
 # Remove Kubernetes nodepool
-gcloud container node-pools delete ${WORKSPACE_NAME} \
+gcloud container node-pools delete ${WORKSPACE_NAMESPACE} \
     --cluster=${CLUSTER_NAME} \
-    --region=${REGION} \
     --zone=${CLUSTER_ZONE} \
     ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
