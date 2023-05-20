@@ -58,7 +58,7 @@ metadata:
   name: {{ include "e6data.name" . }}-e6data-agent-role-binding
 subjects:
   - kind: ServiceAccount
-    name: {{ include "e6data.name" . }}-e6data-agent
+    name: e6data-agent
     {{ include "e6data.namespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
