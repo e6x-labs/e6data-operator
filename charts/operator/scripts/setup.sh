@@ -1,13 +1,17 @@
 #!/bin/bash
-# pattern for role name : "[a-zA-Z0-9_\.]{3,64}"
-# pattern for service account name:  [a-zA-Z][a-zA-Z\d\-]*[a-zA-Z\d]
 
-REGION=$1 # Region for infra
-PROJECT_ID=$2  # GCP project ID
-KUBERNETES_OPERATOR_NAMESPACE=$3 # Namespace for e6data operator
+REGION=$1 # GCP region kuberentes cluster is running in
+PROJECT_ID=$2 # GCP project ID
+KUBERNETES_OPERATOR_NAMESPACE=$3 #  Kubernetes namespace where e6data operator will be deployed
 
 if [[ -z "$1" || -z "$2" || -z "$3" ]]; then
-  echo "Usage: ./setup.sh <region> <project_id> <operator_namespace>"
+  echo "Usage: ./setup.sh <REGION> <PROJECT_ID> <KUBERNETES_OPERATOR_NAMESPACE>"
+  echo "REGION: GCP region kuberentes cluster is running in"
+  echo "PROJECT_ID: GCP project ID"
+  echo "KUBERNETES_OPERATOR_NAMESPACE: Kubernetes namespace where e6data operator will be deployed"
+
+  echo "Example: ./setup.sh us-central1 my-project e6data-operator"
+
 exit 0
 fi
 
@@ -43,19 +47,22 @@ OPERATOR_ROLE_NAME="e6data_operator_${KUBERNETES_OPERATOR_NAMESPACE}"
 COMMON_GCP_FLAGS="--project ${PROJECT_ID} --quiet"
 OPERATOR_SA_EMAIL="e6data-operator-${KUBERNETES_OPERATOR_NAMESPACE}@${PROJECT_ID}.iam.gserviceaccount.com"
 
+# Create GCS bucket
 gcloud storage buckets create gs://${OPERATOR_NAME} --location=${LOCATION} ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_OPERATOR_BUCKET_CREATION" ${STATUS_CODE} 
 
+# Create Service account
 gcloud iam service-accounts create ${OPERATOR_NAME} --description "Service account for e6data kubernetes operator access" --display-name "${OPERATOR_NAME}" ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_KUBERNETES_OPERATOR_GCP_SERVICE_ACCOUNT" ${STATUS_CODE} 
 
-# Create role and binding for writer role
+# Create custom role for GCS bucket read access
 gcloud iam roles create ${OPERATOR_ROLE_NAME} --file gcp_roles/gcs_privileges.yaml ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_KUBERNETES_OPERATOR_GCP_CUSTOM_ROLE" ${STATUS_CODE} 
 
+# Add IAM policy binding for Service account and custom role
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${OPERATOR_SA_EMAIL} \
     --role=projects/${PROJECT_ID}/roles/${OPERATOR_ROLE_NAME} \
@@ -64,7 +71,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 STATUS_CODE=`echo $?`
 status_message "E6DATA_OPERATOR_IAM_POLICY_BINDING" ${STATUS_CODE}     
 
-# Add workload binding
+# Add IAM policy binding for Service account and Kubernetes cluster
 gcloud iam service-accounts add-iam-policy-binding ${OPERATOR_SA_EMAIL} \
     --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${KUBERNETES_OPERATOR_NAMESPACE}/e6data-operator]" \
     --role roles/iam.workloadIdentityUser \
@@ -76,6 +83,11 @@ status_message "E6DATA_KUBERNETES_OPERATOR_GSA_KSA_MAPPING" ${STATUS_CODE}
 
 
 echo "------------Outputs required for helm script------------"
-echo "E6DATA_OPERATOR_BUCKET_NAME=${OPERATOR_NAME}"
 echo "E6DATA_OPERATOR_GSA_EMAIL=${OPERATOR_SA_EMAIL}"
 echo "--------------------------------------------------------"
+
+echo "------------Outputs required for UI setup------------"
+echo "E6DATA_OPERATOR_BUCKET_NAME=${OPERATOR_NAME}"
+echo "--------------------------------------------------------"
+
+
