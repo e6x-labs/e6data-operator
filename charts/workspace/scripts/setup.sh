@@ -54,41 +54,46 @@ WORKSPACE_SA_EMAIL="${WORKSPACE_NAMESPACE}@${PROJECT_ID}.iam.gserviceaccount.com
 
 
 # gcloud container node-pools create ${WORKSPACE_NAMESPACE} \
-# --cluster=${CLUSTER_NAME} \
-# --zone=${CLUSTER_ZONE} \
-# --machine-type=c2-standard-30 \
-# --enable-autoscaling \
-# --total-min-nodes=1 \
-# --total-max-nodes=${MAX_INSTANCES_IN_NODEGROUP} \
-# --spot \
-# --workload-metadata=GKE_METADATA \
-# --location-policy=ANY \
-# ${COMMON_GCP_FLAGS} 
+#   --cluster=${CLUSTER_NAME} \
+#   --zone=${CLUSTER_ZONE} \
+#   --machine-type=c2-standard-30 \
+#   --enable-autoscaling \
+#   --total-min-nodes=1 \
+#   --total-max-nodes=${MAX_INSTANCES_IN_NODEGROUP} \
+#   --spot \
+#   --workload-metadata=GKE_METADATA \
+#   --location-policy=ANY \
+#   ${COMMON_GCP_FLAGS} 
 # STATUS_CODE=`echo $?`
 # status_message "E6DATA_WORKSPACE_NODEPOOL_CREATION" ${STATUS_CODE}
 
+# Create GCS bucket for workspace
 gcloud storage buckets create gs://${WORKSPACE_NAMESPACE} --location=${LOCATION} ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_BUCKET_CREATION" ${STATUS_CODE}
 
+# Create service account for workspace
 gcloud iam service-accounts create ${WORKSPACE_NAMESPACE} --description "Service account for e6data workspace access" --display-name "${WORKSPACE_NAMESPACE}" ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_GCP_SERVICE_ACCOUNT" ${STATUS_CODE} 
 
+# Replace dummy with workspace namespace in gcp_roles yaml files
 find gcp_roles/ -name "*.yaml" -exec sed -i '' "s|dummy|${WORKSPACE_NAMESPACE}|g" {} \;
 
-Create role and binding for writer role
+# Create IAM role for workspace write access on GCS bucket
 gcloud iam roles create ${WORKSPACE_WRITE_ROLE_NAME} --file gcp_roles/gcs_write_privileges.yaml ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_GCP_CUSTOM_ROLE" ${STATUS_CODE} 
 
-# Create role and binding for reader role
+# Create IAM role for workspace read access on GCS buckets
 gcloud iam roles create ${WORKSPACE_READ_ROLE_NAME} --file gcp_roles/gcs_read_privileges.yaml ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_GCP_CUSTOM_ROLE" ${STATUS_CODE}
 
+# Revert the replacement of workspace namespace in gcp_roles yaml files
 find gcp_roles/ -name "*.yaml" -exec sed -i '' "s|${WORKSPACE_NAMESPACE}|dummy|g" {} \;
 
+# Create IAM policy binding for workspace service account and GCS bucket write access
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${WORKSPACE_SA_EMAIL} \
     --role=projects/${PROJECT_ID}/roles/${WORKSPACE_WRITE_ROLE_NAME} \
@@ -97,6 +102,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_GCS_WRITE_IAM_POLICY_BINDING" ${STATUS_CODE}    
 
+# Create IAM policy binding for workspace service account and GCS bucket read access
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${WORKSPACE_SA_EMAIL} \
     --role=projects/${PROJECT_ID}/roles/${WORKSPACE_READ_ROLE_NAME} \
@@ -105,6 +111,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_GCS_WRITE_IAM_POLICY_BINDING" ${STATUS_CODE}    
 
+# Create IAM policy binding for operator service account and GCS bucket read access
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${OPERATOR_SA_EMAIL} \
     --role=projects/${PROJECT_ID}/roles/${WORKSPACE_READ_ROLE_NAME} \
@@ -113,6 +120,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 STATUS_CODE=`echo $?`
 status_message "E6DATA_OPERATOR_GCS_READ_IAM_POLICY_BINDING" ${STATUS_CODE}  
 
+# Create IAM policy binding for workspace service account and Kubernetes cluster
 gcloud iam service-accounts add-iam-policy-binding ${WORKSPACE_SA_EMAIL} \
     --role roles/iam.workloadIdentityUser \
     --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${WORKSPACE_NAME}/${WORKSPACE_NAME}]" \

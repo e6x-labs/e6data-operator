@@ -48,10 +48,10 @@ OPERATOR_SA_EMAIL="e6data-operator-${KUBERNETES_OPERATOR_NAMESPACE}@${PROJECT_ID
 echo "Cleanup Started"
 echo "\n"
 # Remove IAM policy binding for Service account and Kubernetes cluster
-echo `gcloud iam service-accounts remove-iam-policy-binding ${OPERATOR_SA_EMAIL} \
+gcloud iam service-accounts remove-iam-policy-binding ${OPERATOR_SA_EMAIL} \
     --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${KUBERNETES_OPERATOR_NAMESPACE}/e6data-operator]" \
     --role roles/iam.workloadIdentityUser \
-    ${COMMON_GCP_FLAGS}`
+    ${COMMON_GCP_FLAGS}
 STATUS_CODE=`echo $?`
 status_message "E6DATA_KUBERNETES_OPERATOR_GSA_KSA_MAPPING_DELETION" ${STATUS_CODE}   
 
