@@ -1,16 +1,21 @@
 #!/bin/bash
-# pattern for role name : "[a-zA-Z0-9_\.]{3,64}"
-# pattern for service account name:  [a-zA-Z][a-zA-Z\d\-]*[a-zA-Z\d]
 
-REGION=$1 # Region for infra
+REGION=$1 # GCP region kuberentes cluster is running in
 PROJECT_ID=$2  # GCP project ID
-WORKSPACE_NAME=$3 # Namespace for workspace 
-CLUSTER_NAME=$4 # Cluster name for the kubernetes
-CLUSTER_ZONE=$5 # Zone for the cluster
-MAX_INSTANCES_IN_NODEGROUP=$6 # Max VMs to be created in GKE nodegroup
-OPERATOR_SA_EMAIL=$7 # Service account email for the operator
+WORKSPACE_NAME=$3 # Name of e6data workspace to be created
+CLUSTER_NAME=$4 # Kubernetes cluster name
+CLUSTER_ZONE=$5 # Kubernetes cluster zone
+MAX_INSTANCES_IN_NODEGROUP=$6 # Maximum number of instances in nodegroup
+OPERATOR_SA_EMAIL=$7 # Service account email for the e6data kubernetes operator
 if [[ -z "$1" || -z "$2" || -z "$3" || -z "$4" || -z "$5" || -z "$6" || -z "$7" ]]; then
-  echo "Usage: ./setup.sh <region> <project_id> <workspace_name> <cluster_name> <cluster_zone> <max_nodegroup_instances> <operator_sa_email>"
+  echo "Usage: ./setup.sh <REGION> <PROJECT_ID> <WORKSPACE_NAME> <CLUSTER_NAME> <CLUSTER_ZONE> <MAX_INSTANCES_IN_NODEGROUP> <OPERATOR_SA_EMAIL>"
+  echo "REGION: GCP region kuberentes cluster is running in"
+  echo "PROJECT_ID: GCP project ID"
+  echo "WORKSPACE_NAME: Name of e6data workspace to be created"
+  echo "CLUSTER_NAME: Kubernetes cluster name"
+  echo "CLUSTER_ZONE: Kubernetes cluster zone"
+  echo "MAX_INSTANCES_IN_NODEGROUP: Maximum number of instances in nodegroup"
+  echo "OPERATOR_SA_EMAIL: Service account email for the e6data kubernetes operator"
 exit 0
 fi
 
@@ -62,41 +67,43 @@ WORKSPACE_SA_EMAIL="${WORKSPACE_NAMESPACE}@${PROJECT_ID}.iam.gserviceaccount.com
 # STATUS_CODE=`echo $?`
 # status_message "E6DATA_WORKSPACE_NODEPOOL_CREATION" ${STATUS_CODE}
 
-# gcloud storage buckets create gs://${WORKSPACE_NAMESPACE} --location=${LOCATION} ${COMMON_GCP_FLAGS}
-# STATUS_CODE=`echo $?`
-# status_message "E6DATA_WORKSPACE_BUCKET_CREATION" ${STATUS_CODE}
+gcloud storage buckets create gs://${WORKSPACE_NAMESPACE} --location=${LOCATION} ${COMMON_GCP_FLAGS}
+STATUS_CODE=`echo $?`
+status_message "E6DATA_WORKSPACE_BUCKET_CREATION" ${STATUS_CODE}
 
-# gcloud iam service-accounts create ${WORKSPACE_NAMESPACE} --description "Service account for e6data workspace access" --display-name "${WORKSPACE_NAMESPACE}" ${COMMON_GCP_FLAGS}
-# STATUS_CODE=`echo $?`
-# status_message "E6DATA_WORKSPACE_GCP_SERVICE_ACCOUNT" ${STATUS_CODE} 
+gcloud iam service-accounts create ${WORKSPACE_NAMESPACE} --description "Service account for e6data workspace access" --display-name "${WORKSPACE_NAMESPACE}" ${COMMON_GCP_FLAGS}
+STATUS_CODE=`echo $?`
+status_message "E6DATA_WORKSPACE_GCP_SERVICE_ACCOUNT" ${STATUS_CODE} 
 
-# find gcp_roles/ -name "*.yaml" -exec sed -i '' "s|dummy|${WORKSPACE_NAMESPACE}|g" {} \;
+find gcp_roles/ -name "*.yaml" -exec sed -i '' "s|dummy|${WORKSPACE_NAMESPACE}|g" {} \;
 
-# Create role and binding for writer role
-# gcloud iam roles create ${WORKSPACE_WRITE_ROLE_NAME} --file gcp_roles/gcs_write_privileges.yaml ${COMMON_GCP_FLAGS}
-# STATUS_CODE=`echo $?`
-# status_message "E6DATA_WORKSPACE_GCP_CUSTOM_ROLE" ${STATUS_CODE} 
+Create role and binding for writer role
+gcloud iam roles create ${WORKSPACE_WRITE_ROLE_NAME} --file gcp_roles/gcs_write_privileges.yaml ${COMMON_GCP_FLAGS}
+STATUS_CODE=`echo $?`
+status_message "E6DATA_WORKSPACE_GCP_CUSTOM_ROLE" ${STATUS_CODE} 
 
-# # Create role and binding for reader role
-# gcloud iam roles create ${WORKSPACE_READ_ROLE_NAME} --file gcp_roles/gcs_read_privileges.yaml ${COMMON_GCP_FLAGS}
-# STATUS_CODE=`echo $?`
-# status_message "E6DATA_WORKSPACE_GCP_CUSTOM_ROLE" ${STATUS_CODE}
+# Create role and binding for reader role
+gcloud iam roles create ${WORKSPACE_READ_ROLE_NAME} --file gcp_roles/gcs_read_privileges.yaml ${COMMON_GCP_FLAGS}
+STATUS_CODE=`echo $?`
+status_message "E6DATA_WORKSPACE_GCP_CUSTOM_ROLE" ${STATUS_CODE}
 
-# gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-#     --member=serviceAccount:${WORKSPACE_SA_EMAIL} \
-#     --role=projects/${PROJECT_ID}/roles/${WORKSPACE_WRITE_ROLE_NAME} \
-#     --condition="title=${WORKSPACE_NAMESPACE}-access,description=Write Access to ${WORKSPACE_NAME} GCS bucket,expression=resource.name.startsWith(\"projects/_/buckets/${WORKSPACE_NAMESPACE}/\")" \
-#     ${COMMON_GCP_FLAGS}
-# STATUS_CODE=`echo $?`
-# status_message "E6DATA_WORKSPACE_GCS_WRITE_IAM_POLICY_BINDING" ${STATUS_CODE}    
+find gcp_roles/ -name "*.yaml" -exec sed -i '' "s|${WORKSPACE_NAMESPACE}|dummy|g" {} \;
 
-# gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-#     --member=serviceAccount:${WORKSPACE_SA_EMAIL} \
-#     --role=projects/${PROJECT_ID}/roles/${WORKSPACE_READ_ROLE_NAME} \
-#     --condition="None" \
-#     ${COMMON_GCP_FLAGS}
-# STATUS_CODE=`echo $?`
-# status_message "E6DATA_WORKSPACE_GCS_WRITE_IAM_POLICY_BINDING" ${STATUS_CODE}    
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member=serviceAccount:${WORKSPACE_SA_EMAIL} \
+    --role=projects/${PROJECT_ID}/roles/${WORKSPACE_WRITE_ROLE_NAME} \
+    --condition="title=${WORKSPACE_NAMESPACE}-access,description=Write Access to ${WORKSPACE_NAME} GCS bucket,expression=resource.name.startsWith(\"projects/_/buckets/${WORKSPACE_NAMESPACE}/\")" \
+    ${COMMON_GCP_FLAGS}
+STATUS_CODE=`echo $?`
+status_message "E6DATA_WORKSPACE_GCS_WRITE_IAM_POLICY_BINDING" ${STATUS_CODE}    
+
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member=serviceAccount:${WORKSPACE_SA_EMAIL} \
+    --role=projects/${PROJECT_ID}/roles/${WORKSPACE_READ_ROLE_NAME} \
+    --condition="None" \
+    ${COMMON_GCP_FLAGS}
+STATUS_CODE=`echo $?`
+status_message "E6DATA_WORKSPACE_GCS_WRITE_IAM_POLICY_BINDING" ${STATUS_CODE}    
 
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member=serviceAccount:${OPERATOR_SA_EMAIL} \
@@ -106,20 +113,17 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 STATUS_CODE=`echo $?`
 status_message "E6DATA_OPERATOR_GCS_READ_IAM_POLICY_BINDING" ${STATUS_CODE}  
 
-# gcloud iam service-accounts add-iam-policy-binding ${WORKSPACE_SA_EMAIL} \
-#     --role roles/iam.workloadIdentityUser \
-#     --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${WORKSPACE_NAME}/${WORKSPACE_NAME}]" \
-#     ${COMMON_GCP_FLAGS}
-# STATUS_CODE=`echo $?`
-# status_message "E6DATA_WORKSPACE_GSA_KSA_MAPPING" ${STATUS_CODE}     
-
-#bash setup.sh [REGION] [PROJECT_ID] [WORKSPACE_NAME] [CLUSTER_NAME]
-
+gcloud iam service-accounts add-iam-policy-binding ${WORKSPACE_SA_EMAIL} \
+    --role roles/iam.workloadIdentityUser \
+    --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${WORKSPACE_NAME}/${WORKSPACE_NAME}]" \
+    ${COMMON_GCP_FLAGS}
+STATUS_CODE=`echo $?`
+status_message "E6DATA_WORKSPACE_GSA_KSA_MAPPING" ${STATUS_CODE}     
 
 echo "------------Outputs required for helm script------------"
-echo "GKE_NODEGROUP_NAME=e6data-${WORKSPACE_NAME}"
+echo "GKE_NODEGROUP_NAME=${WORKSPACE_NAMESPACE}"
 echo "GKE_NODEGROUP_MAX_INSTANCES=${MAX_INSTANCES_IN_NODEGROUP}"
-echo "WORKSPACE_GCS_BUCKET_NAME=${WORKSPACE_NAME}"
+echo "WORKSPACE_GCS_BUCKET_NAME=${WORKSPACE_NAMESPACE}"
 echo "E6DATA_WORKSPACE_GSA_EMAIL=${WORKSPACE_SA_EMAIL}"
 echo "E6DATA_WORKSPACE_NAME=${WORKSPACE_NAME}"
 echo "--------------------------------------------------------"

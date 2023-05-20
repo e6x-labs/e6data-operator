@@ -1,4 +1,4 @@
-title: e6data-dummy-read-access
+title: dummy-read-access
 description: Custom e6data workspace role for GCS read access 
 stage: GA
 includedPermissions:

@@ -1,4 +1,4 @@
-title: e6data-dummy-write-access
+title: dummy-write-access
 description: Custom e6data workspace role for GCS write access 
 stage: GA
 includedPermissions:
