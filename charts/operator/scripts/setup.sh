@@ -84,9 +84,6 @@ status_message "E6DATA_KUBERNETES_OPERATOR_GSA_KSA_MAPPING" ${STATUS_CODE}
 
 echo "------------Outputs required for helm script------------"
 echo "E6DATA_OPERATOR_GSA_EMAIL=${OPERATOR_SA_EMAIL}"
-echo "--------------------------------------------------------"
-
-echo "------------Outputs required for UI setup------------"
 echo "E6DATA_OPERATOR_BUCKET_NAME=${OPERATOR_NAME}"
 echo "--------------------------------------------------------"
 
