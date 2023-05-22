@@ -69,7 +69,7 @@ gcloud container node-pools create ${WORKSPACE_NAMESPACE} \
   --spot \
   --workload-metadata=GKE_METADATA \
   --location-policy=ANY \
-  ${$COMMON_GCP_KUBE_FLAGS} \
+  ${COMMON_GCP_KUBE_FLAGS} \
   ${COMMON_GCP_FLAGS} 
 STATUS_CODE=`echo $?`
 status_message "E6DATA_WORKSPACE_NODEPOOL_CREATION" ${STATUS_CODE}
