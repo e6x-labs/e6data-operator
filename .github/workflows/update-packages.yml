@@ -1,9 +1,9 @@
 name: Update Helm Packages
 
 on:
-  pull_request_target:
-    types:
-      - closed
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -24,15 +24,9 @@ jobs:
 
       - name: Run commands
         run: |
-          PR_NUMBER=$(echo "${{ github.event.pull_request.url }}" | awk -F'/' '{print $NF}')
+          PR_NUMBER=$(git log --format=%B -n 1 | grep -oE '#[0-9]+' | awk -F'#' '{print $2}')
           PR_TITLE=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}" | jq -r '.title')
           PR_BRANCH=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}" | jq -r '.head.ref')
-          PR_BASE_BRANCH=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}" | jq -r '.base.ref')
-
-          if [[ "${PR_BASE_BRANCH}" != "main" ]]; then
-            echo "Skipping as the PR is not merged into the main branch"
-            exit 0
-          fi
 
           cd "$(git rev-parse --show-toplevel)"
           cd charts/workspace
@@ -44,11 +38,8 @@ jobs:
 
           if [[ "$PR_TITLE" == *"[Major]"* ]]; then
             MAJOR=$((MAJOR + 1))
-            MINOR=0
-            PATCH=0
           elif [[ "$PR_TITLE" == *"[Minor]"* ]]; then
             MINOR=$((MINOR + 1))
-            PATCH=0
           else
             PATCH=$((PATCH + 1))
           fi
@@ -69,11 +60,8 @@ jobs:
 
           if [[ "$PR_TITLE" == *"[Major]"* ]]; then
             MAJOR=$((MAJOR + 1))
-            MINOR=0
-            PATCH=0
           elif [[ "$PR_TITLE" == *"[Minor]"* ]]; then
             MINOR=$((MINOR + 1))
-            PATCH=0
           else
             PATCH=$((PATCH + 1))
           fi
