@@ -26,13 +26,13 @@ jobs:
         run: |
           cd "$(git rev-parse --show-toplevel)"
           cd charts/workspace
-          Helm package .
+          /usr/local/bin/helm package .
           rm -rf workspace-0.1.0.tgz
           mv e6data-operator-0.1.0.tgz workspace-0.1.0.tgz
 
           cd "$(git rev-parse --show-toplevel)"
           cd charts/operator
-          Helm package .
+          /usr/local/bin/helm package .
           rm -rf operator-0.1.0.tgz
           mv e6data-operator-0.1.0.tgz operator-0.1.0.tgz
 
