@@ -18,6 +18,10 @@ jobs:
           git config --global user.name "hemant-uniphi"
           git config --global user.email "hemant@e6x.io"
 
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
       - name: Run commands
         run: |
           cd "$(git rev-parse --show-toplevel)"
