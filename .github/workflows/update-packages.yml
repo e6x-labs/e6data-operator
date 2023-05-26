@@ -1,0 +1,37 @@
+name: Update Helm Packages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "hemant-uniphi"
+          git config --global user.email "hemant@e6x.io"
+
+      - name: Run commands
+        run: |
+          cd "$(git rev-parse --show-toplevel)"
+          cd charts/workspace
+          Helm package .
+          rm -rf workspace-0.1.0.tgz
+          mv e6data-operator-0.1.0.tgz workspace-0.1.0.tgz
+
+          cd "$(git rev-parse --show-toplevel)"
+          cd charts/operator
+          Helm package .
+          rm -rf operator-0.1.0.tgz
+          mv e6data-operator-0.1.0.tgz operator-0.1.0.tgz
+
+          cd "$(git rev-parse --show-toplevel)"
+          git add .
+          git commit -m "Updating packages for Helm"
