@@ -57,7 +57,7 @@ jobs:
           helm package .
           rm -rf "workspace-${CURRENT_VERSION}.tgz"
           mv e6data-operator-0.1.0.tgz "workspace-${NEW_VERSION}.tgz"
-          sed -i "s/version: .*/version: ${NEW_VERSION}/" chart.yaml
+          sed -i "s/version: .*/version: ${NEW_VERSION}/" Chart.yaml
 
           cd "$(git rev-parse --show-toplevel)"
           cd charts/operator
@@ -82,7 +82,7 @@ jobs:
           helm package .
           rm -rf "operator-${CURRENT_VERSION}.tgz"
           mv e6data-operator-0.1.0.tgz "operator-${NEW_VERSION}.tgz"
-          sed -i "s/version: .*/version: ${NEW_VERSION}/" chart.yaml
+          sed -i "s/version: .*/version: ${NEW_VERSION}/" Chart.yaml
 
           cd "$(git rev-parse --show-toplevel)"
           git add .
