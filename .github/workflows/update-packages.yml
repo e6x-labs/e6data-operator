@@ -5,6 +5,7 @@ on:
     branches:
       - main
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -72,6 +73,8 @@ jobs:
           mv e6data-operator-0.1.0.tgz "operator-${NEW_VERSION}.tgz"
           sed -i "s/version: .*/version: ${NEW_VERSION}/" Chart.yaml
 
-          cd "$(git rev-parse --show-toplevel)"
-          git add .
-          git commit -m "Updating packages for Helm"
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
