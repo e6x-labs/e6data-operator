@@ -47,6 +47,11 @@ spec:
           env:
             - name: OPERATOR_BUCKET_NAME
               value: {{ .Values.server.bucketName }}
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace  
 
           ports:
             - containerPort: {{ .Values.server.service.containerPort }}
