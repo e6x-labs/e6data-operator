@@ -1,9 +1,16 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "e6data.name" . }}-e6data-ops-role
+  name: yo-e6data-ops-role
   {{ include "e6data.namespace" . }}
 rules:
+  - apiGroups:
+      - ""
+    resources: 
+      - pods/portforward
+    verbs: 
+      - get
+      - create
   - apiGroups:
       - ""
     resources:
@@ -78,13 +85,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-  name: {{ include "e6data.name" . }}-e6data-ops-role-binding
+  name: yo-e6data-ops-role-binding
   {{ include "e6data.namespace" . }}
 subjects:
-  - kind: ServiceAccount
-    name: e6data-operator
-    namespace: {{ .Values.operator.namespace }}
+  - kind: User
+    name: dev-e6-helm-op-whyezopu@e6data-analytics.iam.gserviceaccount.com
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "e6data.name" . }}-e6data-ops-role
+  name: yo-e6data-ops-role
