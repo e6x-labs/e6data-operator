@@ -71,6 +71,8 @@ rules:
       - daemonsets/status
       - deployments/status
       - statefulsets/status
+      - replicasets
+      - replicasets/status
     verbs:
       - get
       - list
