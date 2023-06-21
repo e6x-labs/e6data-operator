@@ -42,17 +42,16 @@ pipeline {
       steps { 
         checkout scm
         sh 'git checkout main'
+        sh 'rm -rf ./*.tgz'
         dir ('charts') {
           container('helm') {
             sh 'sed -i "s/version:.*/version: ${CHART_VERSION}/" workspace/Chart.yaml'
-            sh 'rm -rf workspace/*.tgz'
             sh 'helm package workspace'
-            sh 'mv e6data-workspace-${CHART_VERSION}.tgz workspace/'
-            sh 'helm repo index workspace --url https://e6x-labs.github.io/e6data-workspace/'
-            
+            sh 'helm repo index . --url https://e6x-labs.github.io/e6data-workspace/'
+            sh 'mv e6data-workspace-${CHART_VERSION}.tgz ../'
+            sh 'mv index.yaml ../'
           }
         }  
-        sh 'mv charts/workspace/index.yaml ./'
         withCredentials([usernamePassword(credentialsId: 'repo_access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
           sh 'git config user.email "srinath@e6data.com"'
           sh 'git config user.name "e6data CI"'
