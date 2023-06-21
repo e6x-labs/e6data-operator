@@ -94,7 +94,7 @@ metadata:
   {{ include "e6data.namespace" . }}
 subjects:
   - kind: User
-    name: dev-e6-helm-op-whyezopu@e6data-analytics.iam.gserviceaccount.com
+    name: {{ .Values.platform.role.service_account | quote }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -110,7 +110,7 @@ metadata:
   {{ include "e6data.namespace" . }}
 subjects:
   - kind: User
-    name: "115022675482241385559"
+    name: {{ .Values.platform.role.UserID | quote }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

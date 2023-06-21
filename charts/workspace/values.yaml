@@ -13,7 +13,11 @@ serviceAccounts:
     create: true
     name: ""
     annotations: {}
-    
+
+platform:
+  role:
+    UserID: 115022675482241385559
+    service_account: dev-e6-helm-op-whyezopu@e6data-analytics.iam.gserviceaccount.com
 server:
   ## Platform-operator server container name
   ##
