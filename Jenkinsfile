@@ -54,7 +54,7 @@ pipeline {
             sh 'git config user.name "e6data CI"'
             sh 'git add .'
             sh 'git commit -a -m "Jenkins build ${BUILD_NUMBER}"'
-            sh 'got tag -m "Jenkins build ${BUILD_NUMBER}" -a ${CHART_VERSION}'
+            sh 'git tag -m "Jenkins build ${BUILD_NUMBER}" -a ${CHART_VERSION}'
             sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin main'
             sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin tags'
           }
