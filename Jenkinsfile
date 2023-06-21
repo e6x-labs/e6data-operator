@@ -41,6 +41,7 @@ pipeline {
 
       steps { 
         checkout scm
+        sh 'git checkout main'
         dir ('charts') {
           container('helm') {
             sh 'sed -i "s/version:.*/version: ${CHART_VERSION}/" workspace/Chart.yaml'
