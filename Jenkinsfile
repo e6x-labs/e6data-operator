@@ -49,15 +49,16 @@ pipeline {
             sh 'mv e6data-workspace-${CHART_VERSION}.tgz workspace/'
             sh 'helm repo index workspace --url https://e6x-labs.github.io/e6data-workspace/'
           }
-          withCredentials([usernamePassword(credentialsId: 'repo_access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh 'git config user.email "srinath@e6data.com"'
-            sh 'git config user.name "e6data CI"'
-            sh 'git add .'
-            sh 'git commit -a -m "Jenkins build ${BUILD_NUMBER}"'
-            sh 'git tag -m "Jenkins build ${BUILD_NUMBER}" -a ${CHART_VERSION}'
-            sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin main'
-            sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin tags'
-          }
+        }  
+        withCredentials([usernamePassword(credentialsId: 'repo_access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+          sh 'git config user.email "srinath@e6data.com"'
+          sh 'git config user.name "e6data CI"'
+          sh 'git add .'
+          sh 'git status'
+          sh 'git commit -a -m "Jenkins build ${BUILD_NUMBER}"'
+          sh 'git tag -m "Jenkins build ${BUILD_NUMBER}" -a ${CHART_VERSION}'
+          sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin main'
+          sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin tags'
         }
       }
     }
