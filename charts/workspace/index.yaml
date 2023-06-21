@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  e6data-workspace:
+  - apiVersion: v2
+    appVersion: v0.1.1
+    created: "2023-06-21T07:53:29.604831227Z"
+    digest: 4ff3291dc29c38bcfe375aaa44c1ae2a742b6eaa4729ee6342b7cf783cbfef79
+    kubeVersion: '>=1.16.0-0'
+    name: e6data-workspace
+    urls:
+    - https://e6x-labs.github.io/e6data-workspace/e6data-workspace-0.7.10.tgz
+    version: 0.7.10
+generated: "2023-06-21T07:53:29.603982116Z"
