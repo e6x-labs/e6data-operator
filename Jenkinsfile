@@ -56,6 +56,7 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'repo_access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
           sh 'git config user.email "srinath@e6data.com"'
           sh 'git config user.name "e6data CI"'
+          sh 'git add .'
           sh 'git commit -a -m "Jenkins build ${BUILD_NUMBER}"'
           sh 'git tag -m "Jenkins build ${BUILD_NUMBER}" -a ${CHART_VERSION}'
           sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY}'
