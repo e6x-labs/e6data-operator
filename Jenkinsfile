@@ -5,7 +5,7 @@ pipeline {
     RELEASE_NAME = "e6data-workspace"
     SCANNER_HOME = tool 'sonarqube'
     
-    CHART_VERSION = "v0.7.${BUILD_NUMBER}"
+    CHART_VERSION = "0.7.${BUILD_NUMBER}"
 
     REPOSITORY = "github.com/e6x-labs/e6data-workspace.git"
   }
@@ -18,10 +18,12 @@ pipeline {
 
   options { 
     disableConcurrentBuilds()
+    skipDefaultCheckout()
   }
 
   stages{
     stage('SonarQube Analysis') {
+        checkout scm
         steps{
             withSonarQubeEnv('sonarqube-jenkins') {
                 sh 'export SONAR_SCANNER_OPTS=-Xmx2048m' 
@@ -32,10 +34,10 @@ pipeline {
 
     stage('AWS build') {
         agent {
-        kubernetes {
+          kubernetes {
             inheritFrom 'helmdeploy'
-            defaultContainer 'helm'
-        }
+            defaultContainer 'jnlp'
+          }
         }
 
         when {
@@ -43,43 +45,27 @@ pipeline {
         }
 
         steps { 
-            
-        dir ('charts/workspace') {
-            sh 'helm package .'
-            sh 'helm repo index . --url https://e6x-labs.github.io/e6data-workspace/'
-            sh 'mkdir -p services/terraform_templates/values/'
-            sh 'tar zxvf e6-terraform.tar.gz -C services/terraform_templates/'
-            sh 'rm -rf ./services/terraform_templates/providers.tf'
-            sh 'rm -rf ./services/terraform_templates/output.tf'
-            sh 'rm -rf ./services/terraform_templates/values.tfvars'
-            sh 'rm -rf ./e6-terraform.tar.gz'
-            sh 'docker build --no-cache --network=host -t $AWS_CONTAINER_IMAGE .'
-            sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
-            sh 'docker push $AWS_CONTAINER_IMAGE'
+          checkout scm
+          dir ('charts') {
+              container('helm') {
+                sh 'sed -i "s/version:.*/version: ${CHART_VERSION}/" workspace/Chart.yaml'
+                sh 'rm -rf workspace/*.tgz'
+                sh 'helm package workspace'
+                sh 'mv workspace-*.tgz e6data-workspace-${CHART_VERSION}.tgz'
+                sh 'helm repo index workspace --url https://e6x-labs.github.io/e6data-workspace/'
+              }
+          }
+          dir ('charts') {
+            container('helm') {
+              withCredentials([usernamePassword(credentialsId: 'repo_access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                sh 'git config user.email "srinath@e6data.com"'
+                sh 'git config user.name "e6data CI"'
+                sh 'git add .'
+                sh 'git commit -m "Jenkins build ${BUILD_NUMBER}"'
+                sh 'got tag -m "Jenkins build ${BUILD_NUMBER}" -a ${CHART_VERSION}'
+                sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin main'
+                sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin tags'
         }
-        }
-    }
-
-    stage('Git tagging') {
-      when {
-        branch 'main'
-        // changeset "cluster/*"
-      }
-
-      steps {
-        checkout scm
-
-        script {
-          env.GITCOMMIT=sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
-        }
-
-        sh 'git config user.email "ci@e6xlabs.cloud"'
-        sh 'git config user.name "Jenkins CI"'
-        withCredentials([usernamePassword(credentialsId: 'repo_access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh 'git tag -m \"commit id: ${GITCOMMIT} docker build: ${IMAGE_VERSION}\" -a ${RELEASE_NAME}-${IMAGE_VERSION}'
-            sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} ${RELEASE_NAME}-${IMAGE_VERSION}'
-        }
-      }
     }
   }
 }
