@@ -3,11 +3,11 @@ entries:
   workspace:
   - apiVersion: v2
     appVersion: v0.1.1
-    created: "2023-06-21T10:15:24.742163512Z"
-    digest: 833b090a73433a1ad20e197ae8255ab4a093072760c1ca83d4a4ce0945d9b200
+    created: "2023-06-21T10:56:04.506484747Z"
+    digest: cceea8e699b9bb9b81a754859eb59bfbe47f19e2bfa1c7cce5162d8da280de83
     kubeVersion: '>=1.16.0-0'
     name: workspace
     urls:
-    - https://e6x-labs.github.io/e6data-workspace/workspace-0.7.22.tgz
-    version: 0.7.22
-generated: "2023-06-21T10:15:24.74125498Z"
+    - https://e6x-labs.github.io/e6data-workspace/workspace-0.7.23.tgz
+    version: 0.7.23
+generated: "2023-06-21T10:56:04.505539915Z"
