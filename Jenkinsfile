@@ -57,8 +57,8 @@ pipeline {
           sh 'git status'
           sh 'git commit -a -m "Jenkins build ${BUILD_NUMBER}"'
           sh 'git tag -m "Jenkins build ${BUILD_NUMBER}" -a ${CHART_VERSION}'
-          sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin main'
-          sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} --origin tags'
+          sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} origin main'
+          sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${REPOSITORY} origin ${CHART_VERSION}'
         }
       }
     }
