@@ -13,9 +13,7 @@ serviceAccounts:
     create: true
     name: ""
     annotations: {}
-
-operator:
-  namespace: ""
+    
 server:
   ## Platform-operator server container name
   ##

@@ -16,11 +16,13 @@ Create unified labels for e6data components
 {{- define "e6data.common.matchLabels" -}}
 app: {{ template "e6data.name" . }}
 release: {{ .Release.Name }}
+product: e6data
 {{- end -}}
 
 {{- define "e6data.common.metaLabels" -}}
 chart: {{ template "e6data.chart" . }}
 heritage: {{ .Release.Service }}
+product: e6data
 {{- end -}}
 
 {{- define "e6data.server.labels" -}}
@@ -172,9 +174,5 @@ Define the e6data.namespace template if set with forceNamespace or .Release.Name
 Define the e6data.name template if set with forceNamespace or .Release.Namespace is set
 */}}
 {{- define "e6data.name" -}}
-{{- if .Values.forceNamespace -}}
-{{ .Values.forceNamespace }}
-{{- else -}}
-{{ .Release.Namespace }}
-{{- end -}}
+{{ .Release.Name }}
 {{- end -}}

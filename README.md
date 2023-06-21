@@ -95,12 +95,11 @@ Step 3: Run the operator cleanup scripts to delete service accounts, roles and r
 - Run helm charts
 ​
 ## Workspace Setup
-Step 1: Create a namespace for workspace setup in Kubernetes cluster (In case of using already existing namespace, skip this step)
+Step 1: Configure the kubernetes context for e6data workspace deployment
 ​
 ```console
 ~$ gcloud config set <GCP_PROJECT_ID>
 ~$ gcloud container clusters get-credentials <KUBERNETES_CLUSTER_NAME>  --project <GCP_PROJECT_ID> --region <GCP_COMPUTE_REGION> [--zone <GCP_KUBERNETES_CLUSTER_ZONE>]
-~$ kubectl create namespace <KUBERNETES_WORKSPACE_NAMESPACE>
 ```
 ​
 Step 2: Run the workspace setup scripts to create service accounts, roles and role bindings
@@ -122,7 +121,7 @@ Step 3: Run the helm charts to deploy workspace
 ```console
 ~$ helm repo add e6data-operator https://e6x-labs.github.io/e6data-operator/
 ~$ helm repo update
-~$ helm install <HELM_WORKSPACE_NAME> -n <KUBERNETES_WORKSPACE_NAMESPACE>  e6data-operator/workspace \
+~$ helm install <HELM_WORKSPACE_NAME> -n <KUBERNETES_WORKSPACE_NAMESPACE>  --create-namespace e6data-operator/workspace \
     --set operator.namespace=<KUBERNETES_OPERATOR_NAMESPACE> \
     --set serviceAccounts.server.annotations."iam\.gke\.io\/gcp-service-account"="<WORKSPACE_SERVICE_ACCOUNT_EMAIL>"
 ```
@@ -131,7 +130,7 @@ Step 3: Run the helm charts to deploy workspace
  Step 1: Delete the workspace helm charts
 ​
  ```console
-~$ helm delete <HELM_WORKSPACE_NAME> -n <KUBERNETES_WORKSPACE_NAMESPACE>
+~$ helm un <HELM_WORKSPACE_NAME> -n <KUBERNETES_WORKSPACE_NAMESPACE>
 ```
 ​
 Step 2: Delete the workspace namespace

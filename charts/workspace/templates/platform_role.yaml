@@ -1,7 +1,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: yo-e6data-ops-role
+  labels:
+    {{- include "e6data.common.metaLabels" . | nindent 4 }}
+  name: {{ include "e6data.name" . }}-platform-role
   {{ include "e6data.namespace" . }}
 rules:
   - apiGroups:
@@ -87,7 +89,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-  name: yo-e6data-ops-role-binding
+    {{- include "e6data.common.metaLabels" . | nindent 4 }}
+  name: {{ include "e6data.name" . }}-platform-role-binding-sa
   {{ include "e6data.namespace" . }}
 subjects:
   - kind: User
@@ -95,4 +98,21 @@ subjects:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: yo-e6data-ops-role
+  name: {{ include "e6data.name" . }}-platform-role
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    {{- include "e6data.common.metaLabels" . | nindent 4 }}
+  name: {{ include "e6data.name" . }}-platform-role-binding-id
+  {{ include "e6data.namespace" . }}
+subjects:
+  - kind: User
+    name: "115022675482241385559"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "e6data.name" . }}-platform-role
+
