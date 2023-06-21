@@ -49,6 +49,8 @@ pipeline {
             sh 'helm package workspace'
             sh 'mv e6data-workspace-${CHART_VERSION}.tgz workspace/'
             sh 'helm repo index workspace --url https://e6x-labs.github.io/e6data-workspace/'
+            sh 'mv workspace/index.yaml ../../'
+            sh 'ls -l ../../'
           }
         }  
         withCredentials([usernamePassword(credentialsId: 'repo_access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
