@@ -48,7 +48,7 @@ pipeline {
             sh 'sed -i "s/version:.*/version: ${CHART_VERSION}/" workspace/Chart.yaml'
             sh 'helm package workspace'
             sh 'helm repo index . --url https://e6x-labs.github.io/e6data-workspace/'
-            sh 'mv e6data-workspace-${CHART_VERSION}.tgz ../'
+            sh 'mv workspace-${CHART_VERSION}.tgz ../'
             sh 'mv index.yaml ../'
           }
         }  

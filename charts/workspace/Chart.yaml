@@ -1,5 +1,5 @@
 apiVersion: v2
-name: e6data-workspace
+name: workspace
 appVersion: "v0.1.1"
 version: 0.7.20
 kubeVersion: ">=1.16.0-0" # creating e6data workspace for kubernetes based querying
