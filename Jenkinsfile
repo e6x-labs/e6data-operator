@@ -49,9 +49,10 @@ pipeline {
             sh 'helm package workspace'
             sh 'mv e6data-workspace-${CHART_VERSION}.tgz workspace/'
             sh 'helm repo index workspace --url https://e6x-labs.github.io/e6data-workspace/'
-            sh 'mv workspace/index.yaml ../'
+            
           }
         }  
+        sh 'mv charts/workspace/index.yaml ./'
         withCredentials([usernamePassword(credentialsId: 'repo_access', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
           sh 'git config user.email "srinath@e6data.com"'
           sh 'git config user.name "e6data CI"'
