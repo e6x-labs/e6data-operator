@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    {{- include "e6data.common.metaLabels" . | nindent 4 }}
+    {{- include "e6data.common.labels" . | nindent 4 }}
   name: {{ include "e6data.name" . }}-platform-role
   {{ include "e6data.namespace" . }}
 rules:
@@ -85,34 +85,20 @@ rules:
       - patch    
 
 ---
+{{- $dot := . }}
+{{- range $index, $rbacUser := .Values.cloud.control_plane_user }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    {{- include "e6data.common.metaLabels" . | nindent 4 }}
-  name: {{ include "e6data.name" . }}-platform-role-binding-sa
-  {{ include "e6data.namespace" . }}
+    {{- include "e6data.common.labels" $dot | nindent 4 }}
+  name: {{ include "e6data.name" $dot }}-platform-role-binding-{{ $index }}
+  {{ include "e6data.namespace" $dot }}
 subjects:
   - kind: User
-    name: {{ .Values.platform.role.service_account | quote }}
+    name: {{ $rbacUser }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "e6data.name" . }}-platform-role
-
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  labels:
-    {{- include "e6data.common.metaLabels" . | nindent 4 }}
-  name: {{ include "e6data.name" . }}-platform-role-binding-id
-  {{ include "e6data.namespace" . }}
-subjects:
-  - kind: User
-    name: {{ .Values.platform.role.UserID | quote }}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: {{ include "e6data.name" . }}-platform-role
-
+  name: {{ include "e6data.name" $dot }}-platform-role
+{{ end }}

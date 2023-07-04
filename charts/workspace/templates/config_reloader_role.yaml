@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    {{- include "e6data.common.metaLabels" . | nindent 4 }}
+    {{- include "e6data.common.labels" . | nindent 4 }}
   name: {{ include "e6data.name" . }}-reloader-role
   {{ include "e6data.namespace" . }}
 rules:
@@ -48,7 +48,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    {{- include "e6data.common.metaLabels" . | nindent 4 }}
+    {{- include "e6data.common.labels" . | nindent 4 }}
   name: {{ include "e6data.name" . }}-reloader-role-binding
   {{ include "e6data.namespace" . }}
 subjects:

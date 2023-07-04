@@ -3,7 +3,7 @@ kind: ClusterRole
 metadata:
   name: {{ include "e6data.name" . }}-e6data-agent
   labels: 
-    {{- include "e6data.common.metaLabels" . | nindent 4 }}
+    {{- include "e6data.common.labels" . | nindent 4 }}
 rules:
 - apiGroups:
   - ""
@@ -57,7 +57,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    {{- include "e6data.common.metaLabels" . | nindent 4 }}
+    {{- include "e6data.common.labels" . | nindent 4 }}
   name: {{ include "e6data.name" . }}-e6data-agent-role-binding
 subjects:
   - kind: ServiceAccount
