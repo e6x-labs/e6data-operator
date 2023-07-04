@@ -6,6 +6,10 @@ podSecurityPolicy:
 
 imagePullSecrets: []
 
+cloud:
+  type: AZURE
+  oidc_value: "blabla"
+
 ## Define serviceAccount names for components. Defaults to component's fully qualified name.
 ##
 serviceAccounts:

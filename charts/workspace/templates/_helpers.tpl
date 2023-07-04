@@ -176,3 +176,41 @@ Define the e6data.name template if set with forceNamespace or .Release.Namespace
 {{- define "e6data.name" -}}
 {{ .Release.Name }}
 {{- end -}}
+
+{{/*
+Define the e6data.serviceaccount.oidc_key template accordign to Values.cloud.type
+*/}}
+{{- define "e6data.serviceaccount.oidc_key" -}}
+{{- if eq .Values.cloud.type "AWS" -}}
+{{- print "eks.amazonaws.com/role-arn" -}}
+{{- else -}}
+{{- if eq .Values.cloud.type "GCP" -}}
+{{- print "iam.gke.io/gcp-service-account" -}}
+{{- else -}}
+{{- if eq .Values.cloud.type "AZURE" -}}
+{{- print "azure.workload.identity/client-id" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Define the e6data.serviceaccount.labels template according to Values.cloud.type
+*/}}
+{{- define "e6data.serviceaccount.labels" -}}
+{{- if eq .Values.cloud.type "AZURE" -}}
+{{- print "azure.workload.identity/use: true" -}}
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Define the e6data.serviceaccount.annotations template according to Values.cloud.type
+*/}}
+{{- define "e6data.serviceaccount.annotations" -}}
+{{- if eq .Values.cloud.type "AWS" -}}
+{{- print "eks.amazonaws.com/sts-regional-endpoints: true" -}}
+{{- end -}}
+{{- end -}}
+
+
