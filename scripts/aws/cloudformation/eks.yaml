@@ -1,0 +1,51 @@
+Parameters:
+  EKSClusterName:
+    Type: String
+    Description: Name of the existing EKS cluster
+
+Resources:
+  MyOIDCProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: !Sub "https://oidc.eks.${AWS::Region}.amazonaws.com/id/${MyClusterName}"
+      ClientIDList:
+        - sts.amazonaws.com
+  EKSReadOnlyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: EKSReadOnlyRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/${EKSClusterName}.eks.amazonaws.com"
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                "oidc.eks.${AWS::Region}.amazonaws.com/id/${MyClusterName}:aud": "sts.amazonaws.com"                
+      Policies:
+        - PolicyName: S3ReadOnlyAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:ListBucket
+                  - s3:ListObjects
+                  - s3:GetObjectVersion
+                Resource:
+                  {% if buckets is defined -%}
+                  {% for i in buckets %}
+                  - !Sub arn:aws:s3:::{{i}}
+                  - !Sub arn:aws:s3:::{{i}}/*{% endfor %}{% if buckets|length == 0 %}
+                  - "*"{% endif %}
+                  {% else %}
+                  {%raw-%}
+                  {% for i in buckets %}
+                  - !Sub arn:aws:s3:::{{i}}
+                  - !Sub arn:aws:s3:::{{i}}/*{% endfor %}{% if buckets|length == 0 %}
+                  - "*"{% endif %}
+                  {%endraw%}
+                  {% endif %}

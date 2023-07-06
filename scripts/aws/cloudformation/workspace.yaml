@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  EKSClusterName:
+    Type: String
+    Description: Name of the existing EKS cluster
+
+  NodeGroupName:
+    Type: String
+    Description: Name of the node group
+
+  IAMRole:
+    Type: String
+    Description: ARN of the IAM role to associate with the node group
+
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: List of subnet IDs where the node group's instances will be launched
+
+  MaxInstancesInNodegroup:
+    Type: Number
+    Description: Maximum number of instances in the node group
+
+  NodegroupInstanceType:
+    Type: String
+    Description: EC2 instance type for the node group
+
+Resources:
+  e6S3Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Join ['-', ['e6data', !Ref "AWS::StackName", !Select [0, !Split ['-', !Select [2, !Split ['/', !Ref "AWS::StackId"]]]]]]
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ 'e6data', !Ref "AWS::StackName", !Select [0, !Split ['-', !Select [2, !Split ['/', !Ref "AWS::StackId"]]]] ] ]
+        {% if tags is defined %}
+        {% for tag in tags %}
+        - Key: "{{ tag.Key }}"
+          Value: "{{ tag.Value }}"
+        {% endfor %}
+        {% else %}
+        {% for i in tags %}
+        - Key: "{{ i.Key }}"
+          Value: "{{ i.Value }}"
+        {% endfor %}
+        {% endif %}
+
+  CrossAccountRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CrossAccountRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub "arn:aws:iam::{{e6ACCOUNTNUMBER}}:root"
+            Action: sts:AssumeRole
+      Tags:
+        {% if tags is defined -%}
+        {% for i in tags %}- Key: "{{i.Key}}"
+          Value: "{{i.Value}}"
+        {% endfor %}
+        {% else %}
+        {%raw-%}
+        {% for i in tags %}- Key: "{{i.Key}}"
+          Value: "{{i.Value}}"
+        {% endfor %}
+        {%endraw%}
+        {% endif %}
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref e6S3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !GetAtt CrossAccountRole.Arn
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:ListBucket
+            Resource:
+              - !Join
+                - ""
+                - - "arn:aws:s3:::"
+                  - !Ref e6S3Bucket
+              - !Join
+                - ""
+                - - "arn:aws:s3:::"
+                  - !Ref e6S3Bucket
+                  - "/*"
+
+  EKSConnectPolicy:
+      Type: AWS::IAM::Policy
+      Properties:
+        PolicyName: EKSConnectPolicy
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - eks:DescribeCluster
+                - eks:DescribeNodegroup
+                - eks:ListNodegroups
+                - eks:ListTagsForResource
+              Resource:
+                - !Sub "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/${EKSClusterName}"
+                - !Sub "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/${EKSClusterName}/*"
+        Roles:
+          - !Ref CrossAccountRole
