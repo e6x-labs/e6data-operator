@@ -20,6 +20,10 @@ Parameters:
     Type: Number
     Description: Maximum number of instances in the node group
 
+  MinInstancesInNodegroup:
+    Type: Number
+    Description: Minimum number of instances in the node group
+
   NodegroupInstanceType:
     Type: String
     Description: EC2 instance type for the node group
@@ -52,6 +56,19 @@ Resources:
         {% endfor %}
         {% endif %}
 
+  MyNodeGroup:
+    Type: AWS::EKS::Nodegroup
+    Properties:
+      ClusterName: !Ref EKSClusterName
+      NodegroupName: !Ref NodeGroupName
+      ScalingConfig:
+        DesiredSize: 1
+        MinSize: !Ref MinInstancesInNodegroup
+        MaxSize: !Ref MaxInstancesInNodegroup
+      InstanceTypes:
+        - !Ref NodegroupInstanceType
+      Subnets: !Ref SubnetIds
+      NodeRole: !Ref IAMRole
   CrossAccountRole:
     Type: AWS::IAM::Role
     Properties:
