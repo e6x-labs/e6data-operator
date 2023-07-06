@@ -42,3 +42,8 @@ variable "nodegroup_instance_type" {
   description = "Instance type for nodegroup"
   type = string
 }
+
+variable "helm_chart_version" {
+  description = "Version of e6data workspace helm chart to deploy"
+  type = string
+}

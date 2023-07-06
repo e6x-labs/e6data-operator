@@ -2,7 +2,7 @@
 resource "google_container_node_pool" "workspace" {
   name             = local.e6data_workspace_name
   /* location         = var.kubernetes_cluster_location */
-  cluster          = data.google_container_cluster.current.id
+  cluster          = data.google_container_cluster.gke_cluster.id
   initial_node_count = 2
   autoscaling {
     total_min_node_count = 2
@@ -75,6 +75,8 @@ resource "google_project_iam_binding" "workspace_write_binding" {
     description = "Write access to e6data workspace GCS bucket"
     expression  = "resource.name.startsWith(\"projects/_/buckets/${local.e6data_workspace_name}/\")"
   }
+
+  depends_on = [ google_project_iam_custom_role.workspace_write_role, google_storage_bucket.workspace_bucket, google_service_account.workspace_sa ]
 }
 
 # Create IAM policy binding for workspace service account and GCS bucket read access
@@ -85,6 +87,8 @@ resource "google_project_iam_binding" "workspace_read_binding" {
   members = [
     "serviceAccount:${google_service_account.workspace_sa.email}",
   ]
+
+  depends_on = [ google_project_iam_custom_role.workspace_read_role, google_storage_bucket.workspace_bucket, google_service_account.workspace_sa ]
 }
 
 resource "google_project_iam_binding" "platform_gcs_read_binding" {
@@ -100,16 +104,9 @@ resource "google_project_iam_binding" "platform_gcs_read_binding" {
     description = "Read access to e6data workspace GCS bucket"
     expression  = "resource.name.startsWith(\"projects/_/buckets/${local.e6data_workspace_name}/\")"
   }
+
+  depends_on = [ google_project_iam_custom_role.workspace_write_role, google_storage_bucket.workspace_bucket ]
 }
-
-# resource "google_project_iam_binding" "workspace_ksa_mapping" {
-#   project = var.gcp_project_id
-#   role    = "roles/iam.workloadIdentityUser"
-
-#   members = [
-#     "serviceAccount:${google_service_account.workspace.email}",
-#   ]
-# }
 
 # Create IAM policy binding for workspace service account and Kubernetes cluster
 resource "google_project_iam_binding" "workspace_ksa_mapping" {
