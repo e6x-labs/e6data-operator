@@ -4,7 +4,7 @@ Parameters:
     Description: Name of the existing EKS cluster
 
 Resources:
-  MyOIDCProvider:
+  e6dataOIDCProvider:
     Type: AWS::IAM::OIDCProvider
     Properties:
       Url: !Sub "https://oidc.eks.${AWS::Region}.amazonaws.com/id/${MyClusterName}"
