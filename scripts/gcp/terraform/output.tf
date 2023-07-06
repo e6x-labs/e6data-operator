@@ -1,5 +1,5 @@
 output "gke_nodegroup_name" {
-  value = local.workspace_namespace
+  value = local.e6data_workspace_name
 }
 
 output "gke_nodegroup_max_instances" {
@@ -7,11 +7,11 @@ output "gke_nodegroup_max_instances" {
 }
 
 output "workspace_gcs_bucket_name" {
-  value = local.workspace_namespace
+  value = local.e6data_workspace_name
 }
 
 output "e6data_workspace_gsa_email" {
-  value = local.workspace_sa_email
+  value = google_service_account.workspace_sa.email
 }
 
 output "e6data_workspace_name" {

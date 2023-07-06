@@ -8,6 +8,8 @@ terraform {
 }
 
 provider "google" {
-    project = var.project_id
+    project = var.gcp_project_id
+    credentials = "/Users/srinathprabhu/Downloads/proven-outpost-351604-b13444a502c4.json"
+    region = var.gcp_region
     #access_token = "{{ gcp_access_token }}"
 }
