@@ -1,2 +1,5 @@
 dev/
 extras/
+**/.terraform
+**/*.tfstate
+**/*.hcl
