@@ -1,4 +1,4 @@
-resource "helm_release" "grafana_deployment" {
+resource "helm_release" "e6data_workspace_deployment" {
   provider = helm.gke_e6data
 
   name       = var.workspace_name
@@ -20,6 +20,6 @@ resource "helm_release" "grafana_deployment" {
 
   set {
     name = "cloud.control_plane_user"
-    value = "{var.control_plane_user}"
+    value = "{${var.control_plane_user}}"
   }
 }

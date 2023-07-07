@@ -1,8 +1,7 @@
 locals {
   e6data_workspace_name = "e6data-workspace-${var.workspace_name}"
-  workspace_write_role_name = "e6data_${var.workspace_name}_write"
-  workspace_read_role_name = "e6data_${var.workspace_name}_read"
-  kubernetes_cluster_location = var.aws_region
+  bucket_names_with_full_path = [for bucket_name in var.bucket_names : "arn:aws:s3:::${bucket_name}/*"]
+  bucket_names_with_arn = [for bucket_name in var.bucket_names : "arn:aws:s3:::${bucket_name}"]
 }
 
 data "aws_caller_identity" "current" {
@@ -11,3 +10,4 @@ data "aws_caller_identity" "current" {
 data "aws_eks_cluster" "current" {
   name     = var.eks_cluster_name
 }
+
