@@ -5,12 +5,12 @@ data "aws_iam_policy_document" "oidc_assume_role_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "${replace(data.aws_eks_cluster.current.identity[0].oidc[0].issuer, "https://", "")}:sub"
+      variable = "${local.oidc_tls_suffix}:sub"
       values   = ["system:serviceaccount:${var.kubernetes_namespace}:${var.workspace_name}"]
     }
 
     principals {
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${data.aws_eks_cluster.current.identity[0].oidc[0].issuer}"]
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.oidc_tls_suffix}"]
       type        = "Federated"
     }
   }

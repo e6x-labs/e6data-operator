@@ -1,5 +1,5 @@
 resource "helm_release" "e6data_workspace_deployment" {
-  provider = helm.gke_e6data
+  provider = helm.eks_e6data
 
   name       = var.workspace_name
   repository = "https://e6x-labs.github.io/e6data-workspace/"

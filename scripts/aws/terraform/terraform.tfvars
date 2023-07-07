@@ -11,6 +11,7 @@ eks_disk_size                = 100
 bucket_names                  = ["*"]
 
 kubernetes_namespace = "e6data"
+helm_chart_version = "0.7.26"
 
 e6data_cross_oidc_role_arn = "arn:aws:iam::298655976287:role/stg-e6-apps-aws-infra-oidc-role" 
 

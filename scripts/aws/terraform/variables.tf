@@ -71,3 +71,8 @@ variable "bucket_names" {
   type        = list(string)
   description = "List of bucket names to be queried by e6data engine"
 }
+
+variable "helm_chart_version" {
+  description = "Version of e6data workspace helm chart to deploy"
+  type        = string
+}
