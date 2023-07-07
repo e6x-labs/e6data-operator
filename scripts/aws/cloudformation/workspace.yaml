@@ -69,6 +69,8 @@ Resources:
         - !Ref NodegroupInstanceType
       Subnets: !Ref SubnetIds
       NodeRole: !Ref IAMRole
+      CapacityType: SPOT
+      
   CrossAccountRole:
     Type: AWS::IAM::Role
     Properties:

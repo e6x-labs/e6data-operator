@@ -1,0 +1,28 @@
+Resources:
+  EKSNodeGroup:
+    Type: AWS::EKS::Nodegroup
+    Properties:
+      ClusterName: !Ref EKSClusterName
+      NodegroupName: !Ref NodeGroupName
+      NodeRole: !Ref IAMRole
+      Subnets: !Ref SubnetIds
+      ScalingConfig:
+        DesiredSize: 2
+        MinSize: 2
+        MaxSize: !Ref MaxInstancesInNodegroup
+      InstanceTypes:
+        - !Ref NodegroupInstanceType
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ 'e6data', !Ref "AWS::StackName", !Select [0, !Split ['-', !Select [2, !Split ['/', !Ref "AWS::StackId"]]]] ] ]
+        {% if tags is defined %}
+        {% for tag in tags %}
+        - Key: "{{ tag.Key }}"
+          Value: "{{ tag.Value }}"
+        {% endfor %}
+        {% else %}
+        {% for i in tags %}
+        - Key: "{{ i.Key }}"
+          Value: "{{ i.Value }}"
+        {% endfor %}
+        {% endif %}
