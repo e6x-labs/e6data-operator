@@ -35,8 +35,8 @@ resource "aws_iam_policy" "e6data_cross_account_s3_policy" {
             "s3:DeleteObject"
         ],
         "Resource": [
-          "arn:aws:s3:::${aws_s3_bucket.workspace_bucket.name}",
-          "arn:aws:s3:::${aws_s3_bucket.workspace_bucket.name}/*"
+          "arn:aws:s3:::${aws_s3_bucket.workspace_bucket.id}",
+          "arn:aws:s3:::${aws_s3_bucket.workspace_bucket.id}/*"
         ]
       }
     ]
