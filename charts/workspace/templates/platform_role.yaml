@@ -95,7 +95,7 @@ metadata:
 subjects:
 {{- range $rbacUser := .Values.cloud.control_plane_user }}
   - kind: User
-    name: {{ $rbacUser }}
+    name: {{ $rbacUser | quote }}
 {{ end }}    
 roleRef:
   apiGroup: rbac.authorization.k8s.io
