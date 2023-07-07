@@ -10,11 +10,6 @@ resource "aws_s3_bucket" "my_protected_bucket" {
   )  
 }
 
-resource "aws_s3_bucket_acl" "my_protected_bucket_acl" {
-  bucket = aws_s3_bucket.my_protected_bucket.id
-  acl    = "private"
-}
-
 resource "aws_s3_bucket_versioning" "my_protected_bucket_versioning" {
   bucket = aws_s3_bucket.my_protected_bucket.id
   versioning_configuration {
@@ -50,7 +45,7 @@ resource "aws_s3_bucket_logging" "my_protected_bucket_logging" {
   target_prefix = "bucket-logs/"
 }
 
-resource "aws_s3_bucket_acl" "s3_bucket_acl" {
+resource "aws_s3_bucket_acl" "my_protected_bucket_acl" {
   bucket = aws_s3_bucket.my_protected_bucket.id
   acl    = "private"
   depends_on = [aws_s3_bucket_ownership_controls.s3_bucket_acl_ownership]
