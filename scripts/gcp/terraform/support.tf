@@ -4,6 +4,15 @@ locals {
   workspace_read_role_name = "e6data_${var.workspace_name}_read"
 
   kubernetes_cluster_location = var.kubernetes_cluster_zone != "" ? var.kubernetes_cluster_zone : var.gcp_region
+
+  helm_values_file =yamlencode({
+    cloud = {
+      type = "GCP"
+      oidc_value = google_service_account.workspace_sa.email
+      control_plane_user = var.control_plane_user
+    }
+  })
+   
 }
 
 data "google_project" "current" {

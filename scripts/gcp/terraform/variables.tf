@@ -47,3 +47,8 @@ variable "helm_chart_version" {
   description = "Version of e6data workspace helm chart to deploy"
   type = string
 }
+
+variable "control_plane_user" {
+  description = "Control plane user to be added to e6data workspace"
+  type = list(string)
+}

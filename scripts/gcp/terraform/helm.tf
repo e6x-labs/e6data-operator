@@ -8,18 +8,5 @@ resource "helm_release" "e6data_workspace_deployment" {
   version    = var.helm_chart_version
   timeout = 600
 
-  set {
-    name = "cloud.type"
-    value = "GCP"
-  }
-
-  set {
-    name = "cloud.oidc_value"
-    value = google_service_account.workspace_sa.email
-  }
-
-  set {
-    name = "cloud.control_plane_user"
-    value = "{${var.control_plane_user}}"
-  }
+  values = [local.helm_values_file]
 }
