@@ -125,4 +125,3 @@ resource "google_project_iam_binding" "platform_ksa_mapping" {
     "serviceAccount:${var.platform_sa_email}",
   ]
 }
-

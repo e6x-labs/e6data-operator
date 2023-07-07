@@ -1,4 +1,3 @@
-
 resource "helm_release" "grafana_deployment" {
   provider = helm.gke_e6data
 
