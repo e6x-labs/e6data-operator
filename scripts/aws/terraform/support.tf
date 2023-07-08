@@ -12,6 +12,19 @@ locals {
       control_plane_user = "e6data-${var.workspace_name}-user"
     }
   })
+
+  mapUsers = try(data.kubernetes_config_map_v1.aws_auth_read.data["mapUsers"], [])
+  mapRoles = try(data.kubernetes_config_map_v1.aws_auth_read.data["mapRoles"], [])
+  mapAccounts = try(data.kubernetes_config_map_v1.aws_auth_read.data["mapAccounts"], [])
+
+  mapRoles2 = yamldecode(local.mapRoles)
+
+  myroles = [{
+    "rolearn"=  aws_iam_role.e6data_cross_account_role.arn,
+    "username"= "e6data-${var.workspace_name}-user"
+  }]
+
+  totalRoles = concat(local.mapRoles2, local.myroles)
 }
 
 data "aws_caller_identity" "current" {
@@ -29,7 +42,11 @@ provider "kubernetes" {
   alias                  = "eks_e6data"
   host                   = data.aws_eks_cluster.current.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.current.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.current.token
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args        = ["eks", "get-token", "--cluster-name", var.eks_cluster_name]
+    command     = "/usr/local/bin/aws"
+  }
 }
 
 provider "helm" {
@@ -37,6 +54,10 @@ provider "helm" {
   kubernetes {
     host                   = data.aws_eks_cluster.current.endpoint
     cluster_ca_certificate = base64decode(data.aws_eks_cluster.current.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.current.token
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      args        = ["eks", "get-token", "--cluster-name", var.eks_cluster_name]
+      command     = "/usr/local/bin/aws"
+    }
   }
 }
