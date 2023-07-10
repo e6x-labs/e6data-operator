@@ -1,5 +1,5 @@
 # Create a node pool in the AKS cluster
-# The name od the node pool must be between 1 to 12 characters in length
+# The name of the node pool must be between 1 to 12 characters in length
 resource "azurerm_kubernetes_cluster_node_pool" "e6data_node_pool" {
   name                    = "${var.workspace_name}nodepool"
   kubernetes_cluster_id   = data.azurerm_kubernetes_cluster.customer_aks.id

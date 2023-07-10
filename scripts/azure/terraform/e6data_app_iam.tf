@@ -5,13 +5,6 @@ resource "azurerm_role_assignment" "e6data_app_blob_role" {
   principal_id         = azuread_service_principal.e6data_service_principal.object_id
 }
 
-# service principal role assignment to provide access to the aks
-resource "azurerm_role_assignment" "aks_permissions" {
-  scope                = data.azurerm_kubernetes_cluster.customer_aks.id
-  role_definition_name = "Contributor"
-  principal_id         = azuread_service_principal.e6data_service_principal.object_id
-}
-
 # custom role definition to the service principal to get the aks credentials
 resource "azurerm_role_definition" "e6data_aks_custom_role" {
   name        = "e6data aks custom role"
