@@ -18,13 +18,13 @@ variable "location" {
 
 variable "e6data_app_secret_expiration_time" {
   type        = string
-  description = "The expiration time of the secret in ISO 8601 format."
-  default     = "24h"
+  description = "A relative duration for which the password is valid until, for example 240h (10 days) or 2400h30m."
+  default     = "3600h"
 }
 
 variable "aks_cluster_name" {
   type        = string
-  description = "The name of the Azure Kubernetes Service (AKS) cluster."
+  description = "The name of your Azure Kubernetes Service (AKS) cluster to deploy e6data workspace."
   default     = "testpoc"
 }
 
@@ -54,7 +54,7 @@ variable "max_number_of_nodes" {
 
 variable "aks_namespace" {
   type        = string
-  description = "The namespace of the AKS cluster."
+  description = "The namespace in the AKS cluster to deploy e6data workspace."
   default     = "default"
 }
 
