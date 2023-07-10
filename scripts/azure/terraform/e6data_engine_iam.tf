@@ -5,7 +5,7 @@ resource "azurerm_role_assignment" "e6data_identity_read_role" {
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = azurerm_user_assigned_identity.e6data_identity.principal_id
 }
-# managed identity role assignment to provide write access to the e6data managed storage account
+# managed identity role assignment to provide read and write access to the e6data managed storage account
 resource "azurerm_role_assignment" "e6data_identity_write_role" {
   scope                = azurerm_storage_account.e6data_storage_account.id
   role_definition_name = "Storage Blob Data Contributor"

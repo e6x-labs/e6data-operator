@@ -1,6 +1,6 @@
 # service principal role assignment to provide read and write access to the e6data managed storage account
 resource "azurerm_role_assignment" "e6data_app_blob_role" {
-  scope                = "/subscriptions/${var.subscription_id}/resourceGroups/${azurerm_resource_group.e6data_rg.name}/providers/Microsoft.Storage/storageAccounts/${azurerm_storage_account.e6data_storage_account.name}"
+  scope                = azurerm_storage_account.e6data_storage_account.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azuread_service_principal.e6data_service_principal.object_id
 }
