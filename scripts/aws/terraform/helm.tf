@@ -21,15 +21,13 @@ data "kubernetes_config_map_v1" "aws_auth_read" {
   }
 }
 
-resource "kubernetes_config_map_v1" "aws_auth_update" {
+resource "kubernetes_config_map_v1_data" "aws_auth_update" {
   provider = kubernetes.eks_e6data
   metadata {
     name = "aws-auth"
     namespace = "kube-system"
   }
-  data = {
-    mapRoles = replace(yamlencode(local.totalRoles), "\"", "")
-    mapUsers = replace(yamlencode(local.mapUsers), "\"", "")
-    mapAccounts = replace(yamlencode(local.mapAccounts), "\"", "")
-  }
+  data = local.map3
+
+  force = true
 }
