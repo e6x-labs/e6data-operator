@@ -3,6 +3,7 @@ resource "azuread_application" "e6data_app" {
   display_name     = "${var.workspace_name}-app"
   owners           = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADMultipleOrgs"
+
 }
 
 # Create an Azure AD application password

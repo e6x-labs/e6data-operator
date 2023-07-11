@@ -1,10 +1,9 @@
 # Create user-assigned identity, which can be assigned to Azure resources for authentication and access control purposes.
 resource "azurerm_user_assigned_identity" "e6data_identity" {
-  location            = azurerm_resource_group.e6data_rg.location
+  location            = data.azurerm_resource_group.aks_resource_group.location
   name                = "${var.workspace_name}-identity"
-  resource_group_name = azurerm_resource_group.e6data_rg.name
+  resource_group_name = var.aks_resource_group_name
   tags                  = local.default_tags
-
 }
 
 # This resource block creates a federated identity credential, which can be used for authentication and authorization from the AKS.

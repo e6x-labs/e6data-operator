@@ -1,8 +1,8 @@
 # Create Azure Storage Account
 resource azurerm_storage_account "e6data_storage_account" {
   name                     = "e6data${var.workspace_name}"
-  resource_group_name      = azurerm_resource_group.e6data_rg.name
-  location                 = azurerm_resource_group.e6data_rg.location
+  resource_group_name      = var.aks_resource_group_name
+  location                 = data.azurerm_resource_group.aks_resource_group.location
   account_kind             = "StorageV2"
   account_tier             = "Standard"
   account_replication_type = "LRS"

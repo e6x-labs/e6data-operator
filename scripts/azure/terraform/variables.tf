@@ -10,12 +10,6 @@ variable "workspace_name" {
   default     = "har"
 }
 
-variable "location" {
-  type        = string
-  description = "The Azure region where the e6data resources will be deployed."
-  default     = "EAST US"
-}
-
 variable "e6data_app_secret_expiration_time" {
   type        = string
   description = "A relative duration for which the password is valid until, for example 240h (10 days) or 2400h30m."
@@ -58,8 +52,20 @@ variable "aks_namespace" {
   default     = "default"
 }
 
+variable "data_resource_group_name" {
+  type        = string
+  description = "Name of the resource group where the data is present."
+  default     = "data-rg"
+}
+
+variable "data_storage_account_name" {
+  type        = string
+  description = "Name of the storage account where the data is present."
+  default     = "data-storage-account"
+}
+
 variable "list_of_containers" {
   type        = list(string)
   description = "List of container names to grant permissions. Use ['*'] to grant permissions to all containers."
-  default     = ["test1","test2"]
+  default     = ["*"]
 }
