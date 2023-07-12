@@ -7,11 +7,11 @@ resource "azurerm_user_assigned_identity" "e6data_identity" {
 }
 
 # This resource block creates a federated identity credential, which can be used for authentication and authorization from the AKS.
-resource "azurerm_federated_identity_credential" "e6data_federated_credential" {
-  name                = "${var.workspace_name}-federated-credential"
-  audience            = ["api://AzureADTokenExchange"]
-  resource_group_name = data.azurerm_resource_group.aks_resource_group.name
-  issuer              = data.azurerm_kubernetes_cluster.customer_aks.oidc_issuer_url
-  parent_id           = azurerm_user_assigned_identity.e6data_identity.id
-  subject             = "system:serviceaccount:${var.aks_namespace}:${var.serviceaccount_name}"
-}
+# resource "azurerm_federated_identity_credential" "e6data_federated_credential" {
+#   name                = "${var.workspace_name}-federated-credential"
+#   audience            = ["api://AzureADTokenExchange"]
+#   resource_group_name = data.azurerm_resource_group.aks_resource_group.name
+#   issuer              = data.azurerm_kubernetes_cluster.customer_aks.oidc_issuer_url
+#   parent_id           = azurerm_user_assigned_identity.e6data_identity.id
+#   subject             = "system:serviceaccount:${var.aks_namespace}:${var.serviceaccount_name}"
+# }

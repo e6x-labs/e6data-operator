@@ -6,7 +6,7 @@ variable "subscription_id" {
 
 variable "workspace_name" {
   type        = string
-  description = "Name of the e6data workspace."
+  description = "Name of the e6data workspace to be created.."
   default     = "har"
 }
 
@@ -18,7 +18,7 @@ variable "e6data_app_secret_expiration_time" {
 
 variable "aks_cluster_name" {
   type        = string
-  description = "The name of your Azure Kubernetes Service (AKS) cluster to deploy e6data workspace."
+  description = "The name of your Azure Kubernetes Service (AKS) cluster in which to deploy the e6data workspace."
   default     = "testpoc"
 }
 
@@ -30,7 +30,7 @@ variable "aks_resource_group_name" {
 
 variable "vm_size" {
   type        = string
-  description = "The VM size for the AKS node pool."
+  description = "The VM size for the AKS node pool.(for example Standard_DS2_v2)"
   default     = "Standard_DS2_v2"
 }
 
@@ -54,18 +54,18 @@ variable "aks_namespace" {
 
 variable "data_resource_group_name" {
   type        = string
-  description = "Name of the resource group where the data is present."
+  description = "The name of the resource group containing data to be queried."
   default     = "data-rg"
 }
 
 variable "data_storage_account_name" {
   type        = string
-  description = "Name of the storage account where the data is present."
+  description = "The name of the storage account containing data to be queried."
   default     = "data-storage-account"
 }
 
 variable "list_of_containers" {
   type        = list(string)
-  description = "List of container names to grant permissions. Use ['*'] to grant permissions to all containers."
+  description = "List of names of the containers inside the data storage account, that the 6data engine queries and require read access to."
   default     = ["*"]
 }
