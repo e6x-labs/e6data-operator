@@ -88,6 +88,15 @@ resource "google_project_iam_binding" "workspace_read_binding" {
     "serviceAccount:${google_service_account.workspace_sa.email}",
   ]
 
+  dynamic "condition" {
+    for_each = contains(var.list_of_buckets, "*") ? toset([]) : toset([1])
+    content {
+      title       = "Workspace Read Access"
+      description = "Read access to e6data workspace GCS bucket"
+      expression  = local.limited_buckets
+    }
+  }
+
   depends_on = [ google_project_iam_custom_role.workspace_read_role, google_storage_bucket.workspace_bucket, google_service_account.workspace_sa ]
 }
 
