@@ -5,6 +5,7 @@ locals {
   workspace_read_role_name = "e6data_${local.workspace_role_name}_read"
 
   kubernetes_cluster_location = var.kubernetes_cluster_zone != "" ? var.kubernetes_cluster_zone : var.gcp_region
+  limited_buckets = join("||", [for bucket in var.list_of_buckets : "resource.name.startsWith(\"projects/_/buckets/${bucket}\")"])
 
   helm_values_file =yamlencode({
     cloud = {
@@ -13,7 +14,9 @@ locals {
       control_plane_user = var.control_plane_user
     }
   })
-   
+  default_labels = {
+    "app" = "e6data"
+  }    
 }
 
 data "google_project" "current" {

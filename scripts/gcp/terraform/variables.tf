@@ -52,3 +52,8 @@ variable "control_plane_user" {
   description = "Control plane user to be added to e6data workspace"
   type = list(string)
 }
+
+variable "list_of_buckets" {
+  description = "list of buckets"
+  type = list(string)
+}

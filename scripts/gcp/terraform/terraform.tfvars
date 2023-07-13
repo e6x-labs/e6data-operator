@@ -18,3 +18,5 @@ control_plane_user = [
 ]
 
 helm_chart_version = "0.7.26"
+
+list_of_buckets = ["*"]

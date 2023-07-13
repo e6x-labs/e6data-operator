@@ -15,6 +15,7 @@ resource "google_container_node_pool" "workspace" {
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
+    labels = local.default_labels
   }
 }
 
@@ -22,6 +23,7 @@ resource "google_container_node_pool" "workspace" {
 resource "google_storage_bucket" "workspace_bucket" {
   name     = local.e6data_workspace_name
   location = var.gcp_region
+  labels = local.default_labels
 }
 
 # # Create service account for workspace
@@ -75,8 +77,8 @@ resource "google_project_iam_binding" "workspace_write_binding" {
     description = "Write access to e6data workspace GCS bucket"
     expression  = "resource.name.startsWith(\"projects/_/buckets/${local.e6data_workspace_name}/\")"
   }
-
   depends_on = [ google_project_iam_custom_role.workspace_write_role, google_storage_bucket.workspace_bucket, google_service_account.workspace_sa ]
+  
 }
 
 # Create IAM policy binding for workspace service account and GCS bucket read access
@@ -87,6 +89,15 @@ resource "google_project_iam_binding" "workspace_read_binding" {
   members = [
     "serviceAccount:${google_service_account.workspace_sa.email}",
   ]
+
+  dynamic "condition" {
+    for_each = contains(var.list_of_buckets, "*") ? toset([]) : toset([1])
+    content {
+      title       = "Workspace Read Access"
+      description = "Read access to e6data workspace GCS bucket"
+      expression  = local.limited_buckets
+    }
+  }
 
   depends_on = [ google_project_iam_custom_role.workspace_read_role, google_storage_bucket.workspace_bucket, google_service_account.workspace_sa ]
 }
