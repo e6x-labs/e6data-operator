@@ -13,7 +13,9 @@ locals {
       control_plane_user = var.control_plane_user
     }
   })
-   
+  default_labels = {
+    "app" = "e6data"
+  }    
 }
 
 data "google_project" "current" {
