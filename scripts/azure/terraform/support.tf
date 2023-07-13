@@ -2,7 +2,6 @@ locals {
   default_tags = {
     app          = "e6data"
   }
-  limited_containers = "/subscriptions/${var.subscription_id}/resourceGroups/${var.data_resource_group_name}/providers/Microsoft.Storage/storageAccounts/${var.data_storage_account_name}/blobServices/default/containers/${join(",", var.list_of_containers)}"
   all_containers = "/subscriptions/${var.subscription_id}/resourceGroups/${var.data_resource_group_name}/providers/Microsoft.Storage/storageAccounts/${var.data_storage_account_name}"
 }
 

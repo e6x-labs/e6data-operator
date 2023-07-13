@@ -9,4 +9,4 @@ max_number_of_nodes="2"
 aks_namespace="default"
 data_resource_group_name= "test123"
 data_storage_account_name= "e6test"
-list_of_containers=["test1","test2"]
+list_of_containers=["test1","test2","test3"]
